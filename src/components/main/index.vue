@@ -20,27 +20,47 @@
         </div>
         <div class="admin-main">
             <div class="admin-main-left">
-                <main-nav></main-nav>
+                <main-nav @changenav="navI" :nav="nav"></main-nav>
             </div>
-            <div class="admin-main-right"></div>
+            <div class="admin-main-right">
+                <ditch :showView = "nav[selectView[0]].view[selectView[1]]"></ditch>
+            </div>
         </div>
     </div>
 </template>
 <script>
 import mainNav from "./mainNav"
+import ditch from "./ditch"
 
 export default {
     name : "admin",
     data(){
         return {
-
+            selectView : [0,0],
+            nav:[
+                    {txt:"推广渠道管理",icon:"icon-tuiguangqudao",child:[{txt:"渠道组管理"},{txt:"渠道媒介管理"},{txt:"推广资源管理"}],view:[[{txt:"渠道组名称",type:"text"},{txt:"渠道组类型",type:"text"},{txt:"渠道组标识",type:"text"}],[],[{txt:"推广名称",type:"input"},{txt:"推广标识",type:"input"},{txt:"渠道选择",type:"select"},{txt:"广告关键词",type:"input"},{txt:"有效性",type:"radio"}]]},
+                    {txt:"固定渠道",icon:"icon-yuyuedengjilei"},
+                    {txt:"推广单页面管理",icon:"icon-mubiaoyemianliebiao"},
+                    {txt:"推广统计分析",icon:"icon-tongji"}
+                ]
+        }
+    },
+    watch:{
+        "selectView":function(val){
+             console.log(this.nav[this.selectView[0]].view[this.selectView[1]])
         }
     },
     mounted(){
         
     },
+    methods:{
+        navI(val){
+            this.selectView = val.split('-');;
+        }
+    },
     components:{
-        mainNav:mainNav
+        mainNav:mainNav,
+        ditch:ditch
     }
 }
 </script>

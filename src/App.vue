@@ -26,6 +26,7 @@ export default {
 
 <style>
 @import "./assets/global.css";
+@import "./assets/icon/iconfont.css";
 html,body{
   height: 100%;
   overflow-x: hidden;
