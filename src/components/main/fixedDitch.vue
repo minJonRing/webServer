@@ -91,7 +91,6 @@
             },
             "add":function(val){
                 let num;
-                console.log(val)
                 if(val < 1){
                     num = 1
                 }else if(val > this.L){
