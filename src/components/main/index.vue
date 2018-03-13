@@ -23,7 +23,16 @@
                 <main-nav @changenav="navI" :nav="nav"></main-nav>
             </div>
             <div class="admin-main-right">
-                <ditch :showView = "nav[selectView[0]].view[selectView[1]]"></ditch>
+                <div class="admin-main-right-title flex flex-mid">
+                    <h2 :class="{'color9':isView2}">{{nav[view1].txt}}</h2>
+                    <i class="iconfont icon-xiangyou"></i>
+                    <h2 v-if="isView2">{{nav[view1].child[view2].txt}}</h2>
+                </div>
+                <div class="admin-main-right-box">
+                    <ditch v-if="view1 == 0 && view2 == 0" :showView = "nav[selectView[0]].view[selectView[1]]"></ditch>
+                    <popu-resource v-if="view1 == 0 && view2 == 2" :showView = "nav[selectView[0]].view[selectView[1]]"></popu-resource>
+                    <fixed-ditch v-if="view1 == 1 && view2 == 0"></fixed-ditch>
+                </div>
             </div>
         </div>
     </div>
@@ -31,12 +40,17 @@
 <script>
 import mainNav from "./mainNav"
 import ditch from "./ditch"
+import popuResource from "./popuResource"
+import fixedDitch from "./fixedDitch"
 
 export default {
     name : "admin",
     data(){
         return {
             selectView : [0,0],
+            view1:0,
+            view2:0,
+            isView2:true,
             nav:[
                     {txt:"推广渠道管理",icon:"icon-tuiguangqudao",child:[{txt:"渠道组管理"},{txt:"渠道媒介管理"},{txt:"推广资源管理"}],view:[[{txt:"渠道组名称",type:"text"},{txt:"渠道组类型",type:"text"},{txt:"渠道组标识",type:"text"}],[],[{txt:"推广名称",type:"input"},{txt:"推广标识",type:"input"},{txt:"渠道选择",type:"select"},{txt:"广告关键词",type:"input"},{txt:"有效性",type:"radio"}]]},
                     {txt:"固定渠道",icon:"icon-yuyuedengjilei"},
@@ -47,7 +61,14 @@ export default {
     },
     watch:{
         "selectView":function(val){
-             console.log(this.nav[this.selectView[0]].view[this.selectView[1]])
+            this.view1 = val[0]-0;
+            this.view2 = val[1]-0;
+            if(!this.nav[(this.selectView[0]-0)].child){
+                this.isView2 = false
+            }else{
+                this.isView2 = true
+            }
+            
         }
     },
     mounted(){
@@ -55,12 +76,15 @@ export default {
     },
     methods:{
         navI(val){
-            this.selectView = val.split('-');;
+            console.log(val)
+            this.selectView = val.split('-');
         }
     },
     components:{
         mainNav:mainNav,
-        ditch:ditch
+        ditch:ditch,
+        popuResource:popuResource,
+        fixedDitch:fixedDitch
     }
 }
 </script>
@@ -148,5 +172,29 @@ body {
     height: 100%;
     width: calc(100% - 260px);
     overflow-y: scroll;
+}
+.admin-main-right-title {
+    padding: 20px 30px;
+    border-bottom: 1px #e8e8e8 solid;
+    line-height: 1;
+}
+.admin-main-right-title  h2{
+    color: #333;
+    font-size: 16px;
+    font-weight: normal;
+    padding: 0 12px;
+}
+.admin-main-right-title  h2:first-child{
+    border-left: 2px #6699ff solid;
+}
+.admin-main-right-title  i {
+    padding-left: 6px;
+}
+.admin-main-right-title  .color9 {
+    color: #999;
+}
+
+.admin-main-right-box {
+    padding: 20px 50px;
 }
 </style>

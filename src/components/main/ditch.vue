@@ -1,10 +1,9 @@
 <template>
   <div class="ditch">
-      <input-text @getChild="setData" :propType="{type:'name'}"></input-text>
-      <input-text @getChild="setData" :propType="{type:'type'}"></input-text>
-      <input-text @getChild="setData" :propType="{type:'icon'}"></input-text>
-      <input-select></input-select>
-      <input-submit @sendFather="sendAjax"></input-submit>
+      <input-text @getText="setData" :elName="'渠道组名称'" :propType="{type:'name'}"></input-text>
+      <input-text @getText="setData" :elName="'渠道组类型'" :propType="{type:'type'}"></input-text>
+      <input-text @getText="setData" :elName="'渠道组标识'" :propType="{type:'icon'}"></input-text>
+      <input-submit @getSubmit="setSubmit"></input-submit>
   </div>
 </template>
 
@@ -12,6 +11,7 @@
     import inputText from "./from/inputText"
     import inputSubmit from "./from/inputSubmit"
     import inputSelect from "./from/inputSelect"
+    import inputRadio from "./from/inputRadio"
     export default {
         name:"ditch",
         props:{
@@ -32,28 +32,22 @@
         methods:{
             // 处理数据
             setData(val){
-                for(let i in this.ajaxData){
-                    if(val.type == i){
-                        this.ajaxData[i] = val.txt
-                    }
-                }
+                this.ajaxData[val.type] = val.txt;
             },
             // 发送ajax请求
-            sendAjax(){
+            setSubmit(){
                 console.log(this.ajaxData)
             }
         },
         components:{
             inputText:inputText,
             inputSubmit:inputSubmit,
-            inputSelect:inputSelect
+            inputSelect:inputSelect,
+            inputRadio:inputRadio
         }
     }
 </script>
 
 <style scoped>
-.ditch {
-    padding: 20px 50px;
-}
 </style>
 

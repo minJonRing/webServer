@@ -14,7 +14,7 @@
         },
         methods:{
             ajaxSubmit(){
-                this.$emit('sendFather')
+                this.$emit('getSubmit')
             }
         }
     }

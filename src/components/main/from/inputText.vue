@@ -1,7 +1,7 @@
 <template>
     <div class="inputText">
         <span>*</span>
-        <p>ss</p>
+        <p>{{elName}}</p>
         <div class="input-box">
             <input type="text" name="name" id="" v-model="txt" @change="setFather">
         </div>
@@ -13,7 +13,8 @@
     export default {
         name:"inputText",
         props:{
-            propType:Object
+            propType:Object,
+            elName:String
         },
         data(){
             return {
@@ -28,7 +29,7 @@
                 /**正则验证
                  * loding  待完成
                  */
-                this.$emit('getChild',{type:this.propType.type,txt:this.txt})
+                this.$emit('getText',{type:this.propType.type,txt:this.txt})
             }
         }
     }
