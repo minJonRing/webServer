@@ -3,10 +3,13 @@
     <transition :name="transitionName">
       <router-view/>    
     </transition>
+    <hint></hint>
   </div>
 </template>
 
 <script>
+import Hint from "@/components/hint"
+
 export default {
   name: 'App',
   data(){
@@ -20,6 +23,9 @@ export default {
       const fromDepth = from.meta.index
       this.transitionName = toDepth < fromDepth ? 'slide-right':'slide-left';
     }
+  },
+  components:{
+    Hint:Hint
   }
 }
 </script>

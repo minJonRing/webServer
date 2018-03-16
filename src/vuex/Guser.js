@@ -5,21 +5,31 @@ Vue.use(Vuex)
 
 let Guser = new Vuex.Store({
     state:{
-        userId : {}
+        userId : {},
+        hint:{txt:"",className:"",bl:false}
     },
     mutations:{
         changUser (state,val) {
             state.userId = val
+        },
+        changeHint(state,val){
+            state.hint = val
         }
     },
     getters:{
         getUser (state) {
             return state.userId
+        },
+        getHint(state){
+            return state.hint
         }
     },
     actions:{
         setUser ({commit},val) {
             commit('changUser',val)
+        },
+        setHint({commit},val){
+            commit('changeHint',val)
         }
     }
 })

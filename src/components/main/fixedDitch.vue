@@ -105,6 +105,7 @@
         mounted(){
             this.L = Math.ceil(this.arr.length/9);
             this.filterData(1)
+            
         },
         methods:{
             filterData(num){
@@ -126,13 +127,13 @@
 
 <style scoped>
 .table-box {
-    width: 700px;
+    /* width: 700px; */
     height: 590px;
     border-bottom: 1px #f7f7f7 solid;
 }
 table {
     text-align: left;
-    width: 700px;
+    width: 100%;
     color: #333;
     border-collapse:collapse;
 }
@@ -152,7 +153,7 @@ tr td {
 }
 /*跳转*/
 .page {
-    width: 700px;
+    /* width: 700px; */
     padding: 11px 0;
     font-size: 14px;
     color: #333;
