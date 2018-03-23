@@ -60,6 +60,7 @@ import { mapGetters, mapActions } from "vuex"
     transition-duration: 600ms;
     transform: matrix(1,0,0,1,0,-100);
     opacity: 0;
+    z-index: 100;
 }
 .hint-success {
     border-color: green;

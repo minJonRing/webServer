@@ -13,7 +13,7 @@
                 <div class="verify-bar">
                     <p>向右滑动验证</p>
                     <div class="verify-bg" :style="{'width':verifyWidth+'px'}">{{verifyInfo}}</div>
-                    <input class="range" v-if="isShowRange" type="range" name="" v-model="range" value="0" min="0" max="278" id="">
+                    <input class="range" v-if="isShowRange" type="range" name="" v-model="range" value="0" min="0" :max="inputMax" id="">
                     <div class="slide-block" :style="{'transform':'translateX('+range+'px)'}">
                         <i :class="['iconfont',{'icon-xiangyou':!isVerify,'icon-trues-active':isVerify,'color-g':isVerify}]"></i>
                         <i v-show="!isVerify" class="iconfont icon-xiangyou"></i>
@@ -55,18 +55,20 @@ export default {
       isVerify:false,
       range:0,
       verifyInfo:"",
-      verifyWidth:0
+      verifyWidth:"",
+      inputMax:0
     }
   },
   mounted(){
     document.querySelector('.range').addEventListener("mouseup",()=>{
         this.range = 0;
     })
+    this.inputMax = document.querySelectorAll('.verify-bar .range')[0].clientWidth-50;
   },
   watch:{
      'range':function(val){
          this.verifyWidth = val;
-         if(val == 278){
+         if(val == this.inputMax){
              this.isShowRange = false;
              this.verifyInfo ="验证通过";
              this.isVerify = true;

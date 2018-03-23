@@ -19,6 +19,10 @@ body {
     box-sizing: border-box;
 }
 
+a:hover {
+    opacity: .7;
+}
+
 
 /*  */
 
@@ -405,4 +409,183 @@ body {
     filter: blur(10px);
     margin: -20px;
     z-index: -1;
+}
+
+
+/* select 模拟 */
+
+.resource-search {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+}
+
+
+/*模拟select*/
+
+.search-resource {
+    padding: 6px 12px;
+}
+
+.imitate-select {
+    position: relative;
+    margin: 0 14px;
+}
+
+.imitate-select-cont {
+    position: relative;
+    display: flex;
+    align-content: center;
+    width: 180px;
+    height: 36px;
+    line-height: 34px;
+    padding: 0 12px;
+    border: 1px #e4e4e4 solid;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.imitate-select-cont i {
+    color: #ddd;
+    transition-duration: 600ms;
+    transform: rotate(180deg);
+}
+
+.imitate-select-cont i.recover {
+    transform: rotate(0);
+}
+
+.imitate-select-list {
+    position: absolute;
+    top: 38px;
+    left: 0;
+    width: 100%;
+    padding: 0 12px;
+    background-color: #fff;
+    border: 1px #e4e4e4 solid;
+    border-radius: 3px;
+    opacity: 0;
+    transition-duration: 600ms;
+    transform: matrix(1, 0, 0, 1, 20, 0);
+    pointer-events: none;
+    z-index: 9;
+}
+
+.imitate-select-list-show {
+    opacity: 1;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    pointer-events: auto;
+}
+
+.imitate-select-list li {
+    padding: 6px 0;
+    border-bottom: 1px #999 dashed;
+}
+
+.imitate-select-list li:last-child {
+    border: none;
+}
+
+.imitate-select-list li a {
+    display: inline-block;
+    width: 100%;
+    color: #333;
+}
+
+
+/*时间单选*/
+
+.seaarch-time {
+    padding: 6px 12px;
+}
+
+.seaarch-time label {
+    padding: 0 12px;
+    cursor: pointer;
+}
+
+.seaarch-time label span {
+    padding-left: 6px;
+}
+
+.input-box-radio {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 1px #d1d1d1 solid;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.input-box-radio input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+
+.input-box-radio span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px #f7f7f7 solid;
+    background-color: #f7f7ff;
+    transition-duration: 600ms;
+}
+
+.input-box-radio input:checked+span {
+    background-color: #6699ff;
+}
+
+
+/*时间范围选择*/
+
+.search-time-scope {
+    padding: 6px 12px;
+}
+
+.search-time-scope .input-box-date {
+    position: relative;
+    width: 180px;
+    height: 31px;
+    margin: 0 14px;
+}
+
+.search-time-scope .input-box-date>input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180px;
+    padding: 7px 12px;
+    border: 1px #e4e4e4 solid;
+    border-radius: 3px;
+}
+
+
+/*筛选提交按钮*/
+
+.search-submit {
+    padding: 6px 12px;
+}
+
+.search-submit a {
+    display: block;
+    width: 120px;
+    line-height: 36px;
+    border-radius: 3px;
+    background-color: #ffcc00;
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+}
+
+
+/**/
+
+.table-box {
+    padding: 12px 0;
 }

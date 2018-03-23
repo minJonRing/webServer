@@ -1,5 +1,5 @@
 <template>
-    <div class="lively-resource">
+    <div class="affair-analyze">
         <div class="resource-search">
             <div class="search-resource flex flex-mid">
                 <p>推广资源</p>
@@ -62,14 +62,12 @@
         </div>
     </div>
 </template>
-
 <script>
     import VTable from './table/table';
     import ajaxData from "./table/ajax"
-// console.log(laydate)
-    
+
     export default {
-        name:"lively-resource",
+        name:"affair-analyze",
         data(){
             return {
                 isSelect:false,
@@ -141,8 +139,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>
-

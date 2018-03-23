@@ -42,8 +42,11 @@
                 <div class="admin-main-right-box">
                     <ditch v-if="view1 == 0 && view2 == 0" :showView = "nav[selectView[0]].view[selectView[1]]"></ditch>
                     <popu-resource v-if="view1 == 0 && view2 == 2" :showView = "nav[selectView[0]].view[selectView[1]]"></popu-resource>
-                    <fixed-ditch v-if="view1 == 1 && view2 == 0"></fixed-ditch>
+                    <fixed-ditch @getChild="setView" v-if="view1 == 1 && view2 == 0"></fixed-ditch>
                     <lively-resource v-if="view1 == 3 && view2 == 0"></lively-resource>
+                    <resource-details v-if="view1 == 3 && view2 == 1"></resource-details>
+                    <affair-analyze v-if="view1 == 3 && view2 == 2"></affair-analyze>
+                    <course-change v-if="view1 == 4 && view2 == 0"></course-change>
                 </div>
             </div>
         </div>
@@ -55,6 +58,9 @@ import ditch from "./ditch"
 import popuResource from "./popuResource"
 import fixedDitch from "./fixedDitch"
 import livelyResource from "./livelyResource"
+import resourceDetails from "./resourceDetails"
+import affairAnalyze from "./affairAnalyze"
+import courseChange from "./courseChange"
 
 export default {
     name : "admin",
@@ -73,7 +79,8 @@ export default {
                     {txt:"推广渠道管理",icon:"icon-tuiguangqudao",child:[{txt:"渠道组管理"},{txt:"渠道媒介管理"},{txt:"推广资源管理"}],view:[[{txt:"渠道组名称",type:"text"},{txt:"渠道组类型",type:"text"},{txt:"渠道组标识",type:"text"}],[],[{txt:"推广名称",type:"input"},{txt:"推广标识",type:"input"},{txt:"渠道选择",type:"select"},{txt:"广告关键词",type:"input"},{txt:"有效性",type:"radio"}]]},
                     {txt:"固定渠道",icon:"icon-yuyuedengjilei"},
                     {txt:"推广单页面管理",icon:"icon-mubiaoyemianliebiao"},
-                    {txt:"推广统计分析",icon:"icon-tongji",child:[{txt:"活跃资源统计"},{txt:"资源详情分析"},{txt:"事件分析"},{txt:"事件管理"}]}
+                    {txt:"推广统计分析",icon:"icon-tongji",child:[{txt:"活跃资源统计"},{txt:"资源详情分析"},{txt:"事件分析"},{txt:"事件管理"}]},
+                    {txt:"进程管理",icon:"icon-qiehuan1"}
                 ]
         }
     },
@@ -94,18 +101,25 @@ export default {
     },
     methods:{
         navI(val){
+            console.log(val)
             this.selectView = val.split('-');
         },
         showUserEdit(){
             this.isUserEditIcon = !this.isUserEditIcon;
-        }
+        },
+        setView(){
+            this.selectView = [0,0]
+        },
     },
     components:{
         mainNav:mainNav,
         ditch:ditch,
         popuResource:popuResource,
         fixedDitch:fixedDitch,
-        livelyResource:livelyResource
+        livelyResource:livelyResource,
+        courseChange:courseChange,
+        resourceDetails:resourceDetails,
+        affairAnalyze:affairAnalyze
     }
 }
 </script>
@@ -261,5 +275,10 @@ body {
 
 .admin-main-right-box {
     padding: 20px 50px;
+    min-height: calc(100% - 57px)
+}
+/**/
+.sourse {
+    height: 100%;
 }
 </style>
