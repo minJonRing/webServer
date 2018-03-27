@@ -3,7 +3,7 @@
         <span>*</span>
         <p>{{elName}}</p>
         <div class="input-box">
-            <input type="text" name="name" id="" v-model="txt" @change="setFather">
+            <input type="text" name="name" id="" v-model="txt" @change="setFather" :placeholder="hint">
         </div>
         <i></i>
     </div>
@@ -14,7 +14,8 @@
         name:"inputText",
         props:{
             propType:Object,
-            elName:String
+            elName:String,
+            hint:String
         },
         data(){
             return {
@@ -63,7 +64,7 @@
     color: #333;
 }
 .inputText input:focus {
-    outline-color: #23cb5c;
+    /* outline-color: #23cb5c; */
 }
 .inputText i {
     width: 260px;

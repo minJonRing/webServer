@@ -11,12 +11,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      // '/saveVisit':{
-      //   target:"http://192.168.2.192/saveVisit",
+      // '/api':{
+      //   target:"http://localhost:3000",
       //   changeOrigin:true,
       //   pathRewrite:{
-      //     '^/saveVisit':'/'
-      //   }
+      //     '^/api':''
+      //   },
+      //   secure:false
       // }
     },
 

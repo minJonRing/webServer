@@ -10,7 +10,7 @@
                     </div>
                     <div :class="['imitate-select-list',{'imitate-select-list-show':isSelect}]">
                         <ul>
-                            <li v-for="(item,index) in selectList" :key="index"><a href="javascript:" @click="copySelect($event,item.txt)">{{item.txt}}</a></li>
+                            <li v-for="(val,key,index) in selectList" :key="index"><a href="javascript:" @click="copySelect($event,{el:val,key:key})">{{val}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                     </div>
                     <div :class="['imitate-select-list',{'imitate-select-list-show':isDitch}]">
                         <ul>
-                            <li v-for="(item,index) in ditchList" :key="index"><a href="javascript:" @click="copyDitch($event,item.txt)">{{item.txt}}</a></li>
+                            <li v-for="(val,key,index) in ditchList" :key="index"><a href="javascript:" @click="copyDitch($event,{el:val,key:key})">{{val}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -42,15 +42,15 @@
             <div class="search-time-scope flex flex-mid">
                 <p>时间范围</p>
                 <div class="input-box-date" >
-                    <input v-show="rangeVal == 1" type="text" id="laydaystart" name="daystart" readonly="readonly" placeholder="请选择起始时间">
-                    <input v-show="rangeVal == 2" type="text" id="laymonthstart" name="monthstart" readonly="readonly" placeholder="请选择起始时间">
-                    <input v-show="rangeVal == 3" type="text" id="layyearstart" name="yearstart" readonly="readonly" placeholder="请选择起始时间">
+                    <input v-show="rangeVal == 'day'" type="text" id="laydaystart" name="daystart" readonly="readonly" placeholder="请选择起始时间">
+                    <input v-show="rangeVal == 'month'" type="text" id="laymonthstart" name="monthstart" readonly="readonly" placeholder="请选择起始时间">
+                    <input v-show="rangeVal == 'year'" type="text" id="layyearstart" name="yearstart" readonly="readonly" placeholder="请选择起始时间">
                 </div>
                 <p>—</p>
                 <div class="input-box-date">
-                    <input v-show="rangeVal == 1" type="text" id="laydayend" name="dayend" readonly="readonly" placeholder="请选择结束时间">
-                    <input v-show="rangeVal == 2" type="text" id="laymonthend" name="monthend" readonly="readonly" placeholder="请选择结束时间">
-                    <input v-show="rangeVal == 3" type="text" id="layyearend" name="yearend" readonly="readonly" placeholder="请选择结束时间">
+                    <input v-show="rangeVal == 'day'" type="text" id="laydayend" name="dayend" readonly="readonly" placeholder="请选择结束时间">
+                    <input v-show="rangeVal == 'month'" type="text" id="laymonthend" name="monthend" readonly="readonly" placeholder="请选择结束时间">
+                    <input v-show="rangeVal == 'year'" type="text" id="layyearend" name="yearend" readonly="readonly" placeholder="请选择结束时间">
                 </div>
             </div>
             <div class="search-submit">
@@ -58,14 +58,15 @@
             </div>
         </div>
         <div class="table-box">
-            <v-table :ajaxData="tqr"></v-table>
+            <v-table :ajaxData="tableData"></v-table>
         </div>
     </div>
 </template>
 
 <script>
     import VTable from './table/table';
-    import ajaxData from "./table/ajax"
+    import ajaxData from "./table/ajax";
+    import {mapGetters,mapActions} from "vuex";
 // console.log(laydate)
     
     export default {
@@ -74,17 +75,19 @@
             return {
                 isSelect:false,
                 selectCont:"请选择推广资源",
-                selectList:[{txt:"请选择推广资源"},{txt:"a"},{txt:"b"},{txt:"c"},{txt:"d"}],
+                selectList:"",
+                selectKey:0,
                 isDitch:false,
                 ditchCont:"请选择渠道组",
-                ditchList:[{txt:"请选择渠道组"},{txt:"360"},{txt:"百度"},{txt:"谷歌"},{txt:"搜狐"}],
+                ditchList:"",
+                ditch:0,
                 selectRange:[
-                    {name:"day",id:1,txt:"天"},
-                    {name:"month",id:2,txt:"月"},
-                    {name:"year",id:3,txt:"年"},
+                    {name:"day",id:"day",txt:"天"},
+                    {name:"month",id:"month",txt:"月"},
+                    {name:"year",id:"year",txt:"年"},
                 ],
-                rangeVal:1,
-                tqr:ajaxData
+                rangeVal:'day',
+                tableData:""
             }
         },
         mounted(){
@@ -110,30 +113,62 @@
                 this.isSelect = false;
                 this.isDitch = false;
             });
+            // 
+            this.$axios.post("http://api.wildog.cn/active/getData").then((res)=>{
+                this.tableData = res.data.data.list;
+            }).catch((err)=>{
+            })
+
+            this.selectList = this.getWeb || "";
+            this.ditchList = this.getGroup || "";
+            
         },
         watch:{
         },
+        computed:{
+            ...mapGetters(['getWeb','getGroup'])
+        },
         methods:{
+            ...mapActions(['setHint']),
             copySelect(event,val){
-                this.selectCont = val;
+                this.selectCont = val.el;
+                this.selectKey = val.key;
                 this.isSelect = false;
             },
             copyDitch(event,val){
-                this.ditchCont = val;
+                this.ditchCont = val.el;
+                this.ditchKey = val.key;
                 this.isDitch = false;
             },
             submitData(){
-                let startIdName = this.rangeVal == 1?"#laydaystart":this.rangeVal ==2?"#laymonthstart":"#layyearstart";
-                let endIdName = this.rangeVal == 1?"#laydayend":this.rangeVal ==2?"#laymonthend":"#layyearend";
+                let startIdName = this.rangeVal == 'day'?"#laydaystart":this.rangeVal =='month'?"#laymonthstart":"#layyearstart";
+                let endIdName = this.rangeVal == 'day'?"#laydayend":this.rangeVal =='month'?"#laymonthend":"#layyearend";
                 let startTime = document.querySelector(startIdName).value;
                 let endTime = document.querySelector(endIdName).value;
                 let data = {
-                    a:this.selectCont,
-                    b:this.ditchCont,
-                    startTime:startTime,
-                    endTime:endTime
+                    web:this.selectKey,
+                    search_engine:this.ditchKey,
+                    type:this.rangeVal,
+                    start_time:startTime,
+                    end_time:endTime
                 }
+                // this.$axios.post("http://api.wildog.cn/active/getData",data).then((res)=>{
+                //     this.tableData = res.data.data.list;
+                //     this.setHint({txt:"请求成功",className:"hint-success"})
+                // }).catch((err)=>{
+                //     this.setHint({txt:"请求失败",className:"hint-error"})
+                // })
                 console.log(data)
+                let _this = this;
+                $.ajax({
+                    url:"http://api.wildog.cn/active/getData",
+                    type:"POST",
+                    data:data,
+                    success:function(res){
+                        _this.setHint({txt:"请求成功",className:"hint-success"})
+                        _this.tableData = res.data.list;
+                    }
+                })
             }
         },
         components:{
@@ -143,6 +178,8 @@
 </script>
 
 <style scoped>
-
+.search-submit a {
+    transition-duration: 600ms;
+}
 </style>
 

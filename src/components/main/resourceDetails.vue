@@ -10,7 +10,7 @@
                     </div>
                     <div :class="['imitate-select-list',{'imitate-select-list-show':isSelect}]">
                         <ul>
-                            <li v-for="(item,index) in selectList" :key="index"><a href="javascript:" @click="copySelect($event,item.txt)">{{item.txt}}</a></li>
+                            <li v-for="(val,key,index) in selectList" :key="index"><a href="javascript:" @click="copySelect($event,{name:val,key:key})">{{val}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -28,9 +28,9 @@
             <div class="search-time-scope flex flex-mid">
                 <p>时间范围</p>
                 <div class="input-box-date" >
-                    <input v-show="rangeVal == 1" type="text" id="laydaystart" name="daystart" readonly="readonly" placeholder="请选择起始时间">
-                    <input v-show="rangeVal == 2" type="text" id="laymonthstart" name="monthstart" readonly="readonly" placeholder="请选择起始时间">
-                    <input v-show="rangeVal == 3" type="text" id="layyearstart" name="yearstart" readonly="readonly" placeholder="请选择起始时间">
+                    <input v-show="rangeVal == 'day'" type="text" id="laydaystart" name="daystart" readonly="readonly" placeholder="请选择时间范围">
+                    <input v-show="rangeVal == 'month'" type="text" id="laymonthstart" name="monthstart" readonly="readonly" placeholder="请选择起始范围">
+                    <input v-show="rangeVal == 'year'" type="text" id="layyearstart" name="yearstart" readonly="readonly" placeholder="请选择起始范围">
                 </div>
             </div>
             <div class="search-submit">
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="table-box">
-            <v-table :ajaxData="tqr"></v-table>
+            <!-- <v-table></v-table> -->
         </div>
     </div>
 </template>
@@ -46,7 +46,8 @@
 <script>
 
     import VTable from './table/table';
-    import ajaxData from "./table/ajax"
+
+    import {mapGetters} from "vuex";
 
     export default {
         name:"resource-detail",
@@ -54,17 +55,17 @@
             return {
                 isSelect:false,
                 selectCont:"请选择推广资源",
-                selectList:[{txt:"请选择推广资源"},{txt:"a"},{txt:"b"},{txt:"c"},{txt:"d"}],
-                isDitch:false,
-                ditchCont:"请选择渠道组",
-                ditchList:[{txt:"请选择渠道组"},{txt:"360"},{txt:"百度"},{txt:"谷歌"},{txt:"搜狐"}],
+                selectList:{},
+                selectKey:"",
+                // isDitch:false,
+                // ditchCont:"请选择渠道组",
+                // ditchList:[{txt:"请选择渠道组"},{txt:"360"},{txt:"百度"},{txt:"谷歌"},{txt:"搜狐"}],
                 selectRange:[
-                    {name:"day",id:1,txt:"天"},
-                    {name:"month",id:2,txt:"月"},
-                    {name:"year",id:3,txt:"年"},
+                    {name:"day",id:"day",txt:"天"},
+                    {name:"month",id:"month",txt:"月"},
+                    {name:"year",id:"yaer",txt:"年"},
                 ],
-                rangeVal:1,
-                tqr:ajaxData
+                rangeVal:"day"
             }
         },
         mounted(){
@@ -77,12 +78,17 @@
             // 点击body 隐藏多选框
             document.body.addEventListener('click',()=>{ 
                 this.isSelect = false;
-                this.isDitch = false;
             });
+
+            this.selectList = this.getWeb;
+        },
+        computed:{
+            ...mapGetters(['getWeb'])
         },
         methods:{
             copySelect(event,val){
-                this.selectCont = val;
+                this.selectCont = val.name;
+                this.selectKey = val.key;
                 this.isSelect = false;
             },
             copyDitch(event,val){
@@ -90,8 +96,8 @@
                 this.isDitch = false;
             },
             submitData(){
-                let startIdName = this.rangeVal == 1?"#laydaystart":this.rangeVal ==2?"#laymonthstart":"#layyearstart";
-                let endIdName = this.rangeVal == 1?"#laydayend":this.rangeVal ==2?"#laymonthend":"#layyearend";
+                let startIdName = this.rangeVal == 'day'?"#laydaystart":this.rangeVal =='month'?"#laymonthstart":"#layyearstart";
+                let endIdName = this.rangeVal == 'day'?"#laydayend":this.rangeVal =='month'?"#laymonthend":"#layyearend";
                 let startTime = document.querySelector(startIdName).value;
                 let endTime = document.querySelector(endIdName).value;
                 let data = {

@@ -3,7 +3,7 @@
         <div class="admin-head flex flex-mid flex-center-3">
             <img class="admin-logo" src="../../assets/logo.png" alt="">
             <div class="admin-user flex flex-mid flex-center-3">
-                <div class="admin-user-box flex flex-mid" @click="showUserEdit">
+                <div class="admin-user-box flex flex-mid" @click.stop="showUserEdit">
                     <div class="admin-user-img">
                         <img class="block w100" src="./images/user.jpeg" alt="">
                     </div>
@@ -61,6 +61,8 @@ import livelyResource from "./livelyResource"
 import resourceDetails from "./resourceDetails"
 import affairAnalyze from "./affairAnalyze"
 import courseChange from "./courseChange"
+// 引入全局状态
+import {mapActions} from "vuex";
 
 export default {
     name : "admin",
@@ -97,7 +99,18 @@ export default {
         }
     },
     mounted(){
-        
+        document.body.addEventListener("click",()=>{
+            this.isUserEditIcon = false;
+        });
+        // ajax 加载 推广资源和渠道组数据
+        this.$axios.post("http://api.wildog.cn/active/getSelect").then((res)=>{
+            let web = res.data.data.web_name;
+            web[0] = "全部";
+            let group = res.data.data.group;
+            group[0] = "全部";
+            this.setWeb(web);
+            this.setGroup(group);
+        })
     },
     methods:{
         navI(val){
@@ -110,6 +123,7 @@ export default {
         setView(){
             this.selectView = [0,0]
         },
+        ...mapActions(['setWeb','setGroup'])
     },
     components:{
         mainNav:mainNav,
@@ -152,6 +166,7 @@ body {
     position: relative;
     height: 100%;
     cursor: pointer;
+    z-index: 99;
 }
 .admin-user-box:hover .admin-user-info{
     opacity: .7;

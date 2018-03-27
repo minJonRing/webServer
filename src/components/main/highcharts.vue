@@ -1,8 +1,12 @@
 <template>
   <div class="highcharts">
       <div class="highcharts-box" @click="hideChart">
+          
           <div class="highcharts-main-father" @click.stop>
-            <div class="highcharts-main" id="highcharts-main"></div>
+                <a class="close" href="javascript:" @click="hideChart">
+                    <i class="iconfont icon-guanbi"></i>
+                </a>
+                <div class="highcharts-main" id="highcharts-main"></div>
           </div>
       </div>
   </div>
@@ -114,6 +118,7 @@
     /* transform: matrix(0,0,0,0,0,0); */
 }
 .highcharts-main-father {
+    position: relative;
     box-shadow: 0 0 5px rgba(0,0,0,1);
     border-radius: 5px;
     background-color: #fff;
@@ -124,6 +129,11 @@
     height: 500px;
     overflow: hidden;
 }
-
+.close {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    color: red;
+}
 </style>
 

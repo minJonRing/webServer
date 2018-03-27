@@ -5,8 +5,8 @@
                 <td v-for="(item,index) in filetrArr" :key="index">
                     <div class="table-title-txt">
                         <p>{{item.txt}}</p>
-                        <i v-if="item.icon" :class="['iconfont','icon-zheng-triangle', {'icon-rotate':item.sort}]" @click="bindSort($event,{id:item.id,sort:item.sort,type:item.type})"></i>
-                        <div class="affairType" v-if="item.switchover" @click="bindSort($event,{id:item.id,sort:item.sort,type:item.type})">
+                        <i v-if="item.icon" :class="['iconfont','icon-sort_icon', {'icon-rotate':item.sort}]" @click="bindSort($event,{id:item.id,sort:item.sort,type:item.type})"></i>
+                        <div class="affairType" v-if="item.switchover" @click.stop="item.sort = !item.sort">
                             <span>{{affairTxt}}</span>
                             <i :class="['iconfont','icon-zheng-triangle',{'i':item.sort}]"></i>
                             <ul :class="['affairTyoe-list',{'ul':item.sort}]" @click.stop>
@@ -14,6 +14,7 @@
                                 <li @click="item.sort = !item.sort;affairTxt='登录'">登录</li>
                                 <li @click="item.sort = !item.sort;affairTxt='注册'">注册</li>
                                 <li @click="item.sort = !item.sort;affairTxt='预约'">预约</li>
+                                <li @click="item.sort = !item.sort;affairTxt='分享'">分享</li>
                             </ul>
                         </div>
                     </div>
@@ -34,10 +35,9 @@
                 <td>{{item[affairNum]}}</td>
                 <td>{{item[affairPercentage]+"%"}}</td>
                 <td>{{item.stayTime}}</td>
-                <td>{{item.averageStay+"%"}}</td>
+                <td>{{item.averageStay}}</td>
             </tr>
       </table>
-      <!-- <page @switchPage="resetData" :dataLength="initData.length" :nowPage="pageNumber"></page> -->
       <highcharts v-if="isShowChart" :drawdata="drawChart" @getIsShowChart="setIsShowChart"></highcharts>
   </div>
 </template>
@@ -47,12 +47,10 @@ window.tqr;
     import '@/assets/icon/iconfont.js';
     import Highcharts from '../highcharts';
     import Page from '../page'
-    // import ajaxData from './ajax.js'
-    // import {dataClassification , dataExtract} from './data'
     import {dataClassification} from './data1'
     export default {
         name:"table-chart",
-        props:["ajaxData"],        
+        props:["ajaxData"],
         data(){
             return {
                 filetrArr:[
@@ -87,9 +85,7 @@ window.tqr;
         },
         mounted(){
             // this.initData = dataClassification(ajaxData)
-            this.initData = dataClassification(this.ajaxData);
-            console.log(this.initData)
-            this.filterData = this.initData.tt1
+            // console.log(this.initData)
         },
         watch:{
             // 监听事件选项变化(事件选项变化 改变 用户展示数据)  
@@ -106,11 +102,18 @@ window.tqr;
                 }else if(val == "预约"){
                     this.affairNum="order";
                     this.affairPercentage="affairOrder";
+                }else if(val == "分享"){
+                    this.affairNum="share";
+                    this.affairPercentage="affairShare";
                 }
             },
             // 监听用户数据展示变化(用户展示数据变化 改变 当前页码数页面的数据)
             "filterData":function(val){
-                this.showData = [].concat(val)
+                this.showData = val
+            },
+            "ajaxData":function(val){
+                this.initData = dataClassification(val);
+                this.filterData = this.initData;
             }
         },
         methods:{
@@ -241,6 +244,7 @@ table tr:nth-child(odd) {
     border: 1px rgb(252, 173, 2) solid;
     border-radius: 3px;
     margin-left: 6px; 
+    cursor: pointer;
 }
 .affairType i {
     transition-duration: 600ms;

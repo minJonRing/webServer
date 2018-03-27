@@ -1,8 +1,8 @@
 <template>
   <div class="ditch">
-      <input-text @getText="setData" :elName="'渠道组名称'" :propType="{type:'name'}"></input-text>
-      <input-text @getText="setData" :elName="'渠道组类型'" :propType="{type:'type'}"></input-text>
-      <input-text @getText="setData" :elName="'渠道组标识'" :propType="{type:'icon'}"></input-text>
+      <input-text @getText="setData" :elName="'渠道组名称'" :propType="{type:'name'}" :hint="'请输入渠道组名称'"></input-text>
+      <input-text @getText="setData" :elName="'渠道组类型'" :propType="{type:'type'}" :hint="'请输入渠道组类型'"></input-text>
+      <input-text @getText="setData" :elName="'渠道组标识'" :propType="{type:'icon'}" :hint="'请输入渠道组标识'"></input-text>
       <input-submit @getSubmit="setSubmit"></input-submit>
   </div>
 </template>

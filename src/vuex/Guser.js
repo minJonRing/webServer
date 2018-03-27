@@ -6,7 +6,9 @@ Vue.use(Vuex)
 let Guser = new Vuex.Store({
     state:{
         userId : {},
-        hint:{txt:"",className:"",bl:false}
+        hint:{txt:"",className:"",bl:false},
+        web:"",
+        group:""
     },
     mutations:{
         changUser (state,val) {
@@ -14,6 +16,12 @@ let Guser = new Vuex.Store({
         },
         changeHint(state,val){
             state.hint = val
+        },
+        changeWeb(state,val){
+            state.web = val
+        },
+        changeGroup(state,val){
+            state.group = val
         }
     },
     getters:{
@@ -22,6 +30,12 @@ let Guser = new Vuex.Store({
         },
         getHint(state){
             return state.hint
+        },
+        getWeb(state){
+            return state.web
+        },
+        getGroup(state){
+            return state.group
         }
     },
     actions:{
@@ -30,6 +44,12 @@ let Guser = new Vuex.Store({
         },
         setHint({commit},val){
             commit('changeHint',val)
+        },
+        setWeb({commit},val){
+            commit('changeWeb',val)
+        },
+        setGroup({commit},val){
+            commit('changeGroup',val)
         }
     }
 })

@@ -82,7 +82,7 @@ export default {
     ...mapActions(['setUser','setHint']),
     login(){
       this.setUser(2)
-      this.setHint({txt:"登入成功",className:"hint-success"})
+      this.setHint({txt:"登录成功",className:"hint-success"})
       this.$router.push({path:"/app/main"})
       return;  
       this.$axios.post('/app/adminLogin',{username:this.username,password:this.password}).then((res)=>{
@@ -242,7 +242,7 @@ html,body * {
 .ajax-login-submit a {
     display: block;
     line-height: 60px;
-    background-color: #ffcc00;
+    background-color: #edbf07;
     border-radius: 30px;
     text-align: center;
     color: #fff;
@@ -251,7 +251,7 @@ html,body * {
 }
 
 .ajax-login-submit a:hover {
-    opacity: .7;
+    background-color: #ffcc00;
 }
 
 .color-g {

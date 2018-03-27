@@ -24,10 +24,11 @@ import { mapGetters, mapActions } from "vuex"
             ...mapGetters(['getHint'])
         },
         mounted(){
-            this.icon = this.getHint.className == "hint-success"?"icon-trues-active":"icon-error";
+            
         },
         watch:{
             'getHint.className':function(val){
+                this.icon = this.getHint.className == "hint-success"?"icon-chenggong":"icon-error";
                 if(val != ""){
                     setTimeout(() => {
                         this.getHint.className = "";
