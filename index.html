@@ -5,15 +5,45 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>app</title>
+    <style>
+        .footer {
+            height: 30px;
+            background-color: #ebf1fc;
+            color: #999;
+            font-size: 12px;
+            line-height: 30px;
+            text-align: center;
+        }
+        
+        #app {
+            height: calc(100% - 30px);
+        }
+    </style>
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="/static/laydate.js"></script>
+    <script>
+        var webUrl = "http://api.wildog.cn";
+        var PutOnRecords, TITLE;
+    </script>
 </head>
 
 <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <div class="footer"></div>
 </body>
-
-
+<script>
+    $.ajax({
+        url: webUrl + "/site/config",
+        type: "POST",
+        dataType: "JSON",
+        success: function(res) {
+            PutOnRecords = res.data.copyright;
+            TITLE = res.data.pageTitle;
+            document.querySelector(".footer").innerHTML = PutOnRecords;
+            document.title = TITLE;
+        }
+    })
+</script>
 
 </html>

@@ -3,7 +3,7 @@
         <span>*</span>
         <p>{{elName}}</p>
         <div class="input-box">
-            <input type="text" name="name" id="" v-model="txt" @change="setFather" :placeholder="hint">
+            <input type="text" name="name" v-model="cont" @change="setFather" :placeholder="hint">
         </div>
         <i></i>
     </div>
@@ -15,22 +15,28 @@
         props:{
             propType:Object,
             elName:String,
-            hint:String
+            hint:String,
+            txt:String
         },
         data(){
             return {
-                txt:""
+                cont:""
             }
         },
         mounted(){
             
+        },
+        watch:{
+            "txt":function(val){
+                this.cont = val;
+            }
         },
         methods:{
             setFather(){
                 /**正则验证
                  * loding  待完成
                  */
-                this.$emit('getText',{type:this.propType.type,txt:this.txt})
+                this.$emit('getText',{type:this.propType.type,name:this.cont})
             }
         }
     }

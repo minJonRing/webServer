@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 let Guser = new Vuex.Store({
     state:{
-        userId : {},
+        userId : "",
         hint:{txt:"",className:"",bl:false},
         web:"",
         group:""

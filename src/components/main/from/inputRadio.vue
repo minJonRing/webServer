@@ -35,7 +35,7 @@
         },
         methods:{
             setFather(){
-                this.$emit("getRadio",{type:this.propType.type,txt:this.value})
+                this.$emit("getRadio",{type:this.propType.type,name:this.value})
             }
         }
     }

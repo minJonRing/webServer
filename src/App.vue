@@ -33,15 +33,10 @@ export default {
 <style>
 @import "./assets/global.css";
 @import "./assets/icon/iconfont.css";
-html,body{
-  height: 100%;
-  overflow-x: hidden;
-}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100%;
   text-align: center;
   color: #2c3e50;
   perspective: 1000px;

@@ -1,31 +1,59 @@
 <template>
   <div class="ditch">
         <!-- <input-select @getSelect="setData" :elName="'渠道组类型'" :txt="ajaxData.ajaxType" :propType="{type:'type'}" :hint="'请输入渠道组类型'" :list="list"></input-select> -->
+        <div class="inputSelect" style="z-index:9">
+            <span>*</span>
+            <p>渠道组</p>
+            <div class="input-box">
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowGroup}"></i>
+                <div class="copyModel" @click.stop="bindChangeGroup">{{type}}</div>
+                <ul :class="{'show-select':isShowGroup}" @click.stop>
+                    <li v-for="(val,key,index) in group" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
+                </ul>
+            </div>
+            <i></i>
+        </div>
         <div class="inputSelect">
             <span>*</span>
-            <p>渠道组类型</p>
+            <p>渠道媒介</p>
             <div class="input-box">
-                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowSelect}"></i>
-                <div class="copyModel" @click.stop="isShowSelect = !isShowSelect">{{type}}</div>
-                <ul :class="{'show-select':isShowSelect}" @click.stop>
-                    <li v-for="(val,key,index) in list" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowMedium}"></i>
+                <div class="copyModel" @click.stop="bindChangeMedium">{{type}}</div>
+                <ul :class="{'show-select':isShowMedium}" @click.stop>
+                    <li v-for="(val,key,index) in medium" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
+                </ul>
+            </div>
+            <i></i>
+        </div>
+        <div class="inputSelect">
+            <span>*</span>
+            <p>推广资源</p>
+            <div class="input-box">
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowMedium}"></i>
+                <div class="copyModel" @click.stop="bindChangeMedium">{{type}}</div>
+                <ul :class="{'show-select':isShowMedium}" @click.stop>
+                    <li v-for="(val,key,index) in medium" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
+                </ul>
+            </div>
+            <i></i>
+        </div>
+        <div class="inputSelect">
+            <span>*</span>
+            <p>推广类型</p>
+            <div class="input-box">
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowMedium}"></i>
+                <div class="copyModel" @click.stop="bindChangeMedium">{{type}}</div>
+                <ul :class="{'show-select':isShowMedium}" @click.stop>
+                    <li v-for="(val,key,index) in medium" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
                 </ul>
             </div>
             <i></i>
         </div>
         <div class="inputText">
             <span>*</span>
-            <p>渠道组名称</p>
+            <p>资源名称</p>
             <div class="input-box">
-                <input type="text" name="name" v-model="name" placeholder="请输入渠道组名称">
-            </div>
-            <i></i>
-        </div>
-        <div class="inputText">
-            <span>*</span>
-            <p>渠道组标识</p>
-            <div class="input-box">
-                <input type="text" name="name" v-model="icon" placeholder="请输入渠道组标识">
+                <input type="text" name="name" v-model="matchIcon" placeholder="请输入渠道组匹配标识">
             </div>
             <i></i>
         </div>
@@ -45,20 +73,22 @@
     import {mapActions} from "vuex"
     export default {
         name:"ditch",
-        props:["searchUrl"],
+        props:["searchUrl","popu"],
         data(){
             return {
                 ajaxId:0,
                 name:"",
                 type:"请选择",
                 icon:"",
+                matchIcon:"",
                 ajaxType:0,
-                list:{},
-                isShowSelect:false,
+                isShowGroup:false,
+                isShowMedium:false,
                 isNew:false
             }
         },
         mounted(){
+            console.log(this.popu)
             let _this = this;
              $.ajax({
                 url:_this.searchUrl+"getEditInfo",
@@ -67,11 +97,11 @@
                 dataType:"JSON",
                 success:(res)=>{
                     let data = res.data;
-                    this.list = data.medium_type;
+                    this.list = data.group_type;
                 }
             })
             document.body.addEventListener('click',()=>{
-                this.isShowSelect=false;
+                this.isShowGroup = this.isShowMedium = false;
             })
             
             bus.$on('bindBrother',function (val) { 
@@ -84,16 +114,18 @@
                         success:(res)=>{
                             let data = res.data;
                             _this.ajaxId = val;
-                            _this.name= data.medium[0].name; //名称
-                            _this.ajaxType = data.medium[0].type; //类型索引(s数字)
-                            _this.type = _this.list[data.medium[0].type]; //类型索引(文字)
-                            _this.icon = data.medium[0].identifying; //标识
+                            _this.name= data.group[0].name; //名称
+                            _this.ajaxType = data.group[0].type; //类型索引(s数字)
+                            _this.type = _this.list[data.group[0].type]; //类型索引(文字)
+                            _this.icon = data.group[0].identifying; //标识
+                            _this.matchIcon = data.group[0].pattern; //匹配标识 
                         }
                     })
                 }else{
                     _this.name="";
                     _this.type="请选择";
                     _this.icon="";
+                    _this.matchIcon="";
                     _this.ajaxType=0;
                 }
             })
@@ -101,12 +133,20 @@
         watch:{
 
         },
+        computed:{
+            group:function(){
+                return this.popu.group;
+            },
+            medium:function(){
+                return this.popu.medium
+            }
+        },
         methods:{
             ...mapActions(['setHint']),
             // 发送ajax请求
             bindCreate(){
                 let _this = this;
-                let _data = {name:this.name,type:this.ajaxType,identifying:this.icon}
+                let _data = {name:this.name,type:this.ajaxType,identifying:this.icon,pattern:this.matchIcon}
                 if(this.ajaxId){
                     _data.id = this.ajaxId;
                 }
@@ -138,6 +178,14 @@
                 this.ajaxType = val.key;
                 this.type = val.val;
                 this.isShowSelect = false;
+            },
+            bindChangeGroup(){
+                this.isShowGroup = !this.isShowGroup;
+                this.isShowMedium = false;
+            },
+            bindChangeMedium(){
+                this.isShowMedium = !this.isShowMedium;
+                this.isShowGroup = false;
             }
         },
         components:{

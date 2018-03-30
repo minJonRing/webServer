@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="table-box">
-            <!-- <v-table></v-table> -->
+            <v-table></v-table>
         </div>
     </div>
 </template>
@@ -97,14 +97,12 @@
             },
             submitData(){
                 let startIdName = this.rangeVal == 'day'?"#laydaystart":this.rangeVal =='month'?"#laymonthstart":"#layyearstart";
-                let endIdName = this.rangeVal == 'day'?"#laydayend":this.rangeVal =='month'?"#laymonthend":"#layyearend";
+                // let endIdName = this.rangeVal == 'day'?"#laydayend":this.rangeVal =='month'?"#laymonthend":"#layyearend";
                 let startTime = document.querySelector(startIdName).value;
-                let endTime = document.querySelector(endIdName).value;
+                // let endTime = document.querySelector(endIdName).value;
                 let data = {
                     a:this.selectCont,
-                    b:this.ditchCont,
-                    startTime:startTime,
-                    endTime:endTime
+                    startTime:startTime
                 }
                 console.log(data)
             }

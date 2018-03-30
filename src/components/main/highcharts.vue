@@ -84,10 +84,10 @@
                     },
                     legend:{
                         labelFormat: '<span style="{color}">22</span>'
-                    },
-                    credits:{
-                        text : "wildog"
                     }
+                    // credits:{
+                    //     text : "wildog"
+                    // }
             }
             console.log(options)
             var chart = this.$highcharts.chart('highcharts-main', options);

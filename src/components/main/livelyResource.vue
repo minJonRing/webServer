@@ -4,7 +4,7 @@
             <div class="search-resource flex flex-mid">
                 <p>推广资源</p>
                 <div class="imitate-select">
-                    <div class="imitate-select-cont" @click.stop="isSelect = !isSelect">
+                    <div class="imitate-select-cont" @click.stop="bindChangeSelect">
                         <p class="flex-1">{{selectCont}}</p>
                         <i class="iconfont icon-zheng-triangle" :class="{'recover':isSelect}"></i>
                     </div>
@@ -18,7 +18,7 @@
             <div class="search-resource flex flex-mid">
                 <p>渠道组</p>
                 <div class="imitate-select">
-                    <div class="imitate-select-cont" @click.stop="isDitch = !isDitch">
+                    <div class="imitate-select-cont" @click.stop="bindChangeDitch">
                         <p class="flex-1">{{ditchCont}}</p>
                         <i class="iconfont icon-zheng-triangle" :class="{'recover':isDitch}"></i>
                     </div>
@@ -92,36 +92,54 @@
         },
         mounted(){
             // 天数选择
-            var startDay =  laydate.render({elem: "#laydaystart",done:function(value,dates){
+            let nowDate = new Date(),nowYear = nowDate.getFullYear(),nowMonth = nowDate.getMonth()+1,nowDay = nowDate.getDate()
+            var startDay =  laydate.render({elem: "#laydaystart",max:nowYear+'-'+nowMonth+'-'+nowDay,done:function(value,dates){
                 endDay.config.min ={year:dates.year,month:dates.month-1,date: dates.date}
-                endDay.config.max ={year:dates.year,month:dates.month-1,date: 31}
+                endDay.config.max ={year:dates.year,month:dates.month-1,date: nowDay}
             }});
-            var endDay =  laydate.render({elem: "#laydayend"});
+            var endDay =  laydate.render({elem: "#laydayend",max:nowYear+'-'+nowMonth+'-'+nowDay,done:function(value,dates){
+                startDay.config.min ={year:dates.year,month:dates.month-1,date: 1}
+                startDay.config.max ={year:dates.year,month:dates.month-1,date: dates.date}
+            }});
             // 月份选择
-            var startMonth =  laydate.render({elem: "#laymonthstart",type: "month",done:function(value,dates){
+            var startMonth =  laydate.render({elem: "#laymonthstart",type: "month",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
                 endMonth.config.min ={year:dates.year,month:dates.month-1}
-                endMonth.config.max ={year:dates.year,month:11}
+                endMonth.config.max ={year:dates.year,month:nowMonth-1}
+                $('#laymonthstart').val(value);
+                $('body').click()
             }});
-            var endMonth = laydate.render({elem: "#laymonthend",type: "month"});
+            var endMonth = laydate.render({elem: "#laymonthend",type: "month",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
+                startMonth.config.min ={year:dates.year,month:0}
+                startMonth.config.max ={year:dates.year,month:dates.month-1}
+                $('#laymonthend').val(value);
+                $('body').click()
+            }});
             // 年份选择
-            var startYear =  laydate.render({elem: "#layyearstart",type: "year",done:function(value,dates){
+            var startYear =  laydate.render({elem: "#layyearstart",type: "year",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
                 endYear.config.min ={year:dates.year}
+                $('#layyearstart').val(value);
+                $('body').click()
             }});
-            var endYear = laydate.render({elem: "#layyearend",type: "year"});
+            var endYear = laydate.render({elem: "#layyearend",type: "year",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
+                startYear.config.max ={year:dates.year}
+                $('#layyearend').val(value);
+                $('body').click()
+            }});
             // 点击body 隐藏多选框
             document.body.addEventListener('click',()=>{ 
                 this.isSelect = false;
                 this.isDitch = false;
             });
             // 
-            this.$axios.post("http://api.wildog.cn/active/getData").then((res)=>{
+            this.$axios.post(webUrl+"/active/getData").then((res)=>{
                 this.tableData = res.data.data.list;
             }).catch((err)=>{
             })
-
-            this.selectList = this.getWeb || "";
-            this.ditchList = this.getGroup || "";
-            
+            // 异步更新数据
+            setTimeout(()=>{
+                this.selectList = this.getWeb ;
+                this.ditchList = this.getGroup ;
+            },1000)
         },
         watch:{
         },
@@ -152,23 +170,27 @@
                     start_time:startTime,
                     end_time:endTime
                 }
-                // this.$axios.post("http://api.wildog.cn/active/getData",data).then((res)=>{
-                //     this.tableData = res.data.data.list;
-                //     this.setHint({txt:"请求成功",className:"hint-success"})
-                // }).catch((err)=>{
-                //     this.setHint({txt:"请求失败",className:"hint-error"})
-                // })
                 console.log(data)
                 let _this = this;
                 $.ajax({
-                    url:"http://api.wildog.cn/active/getData",
+                    url:webUrl+"/active/getData",
                     type:"POST",
                     data:data,
+                    dataType:"JSON",
                     success:function(res){
                         _this.setHint({txt:"请求成功",className:"hint-success"})
                         _this.tableData = res.data.list;
+                        
                     }
                 })
+            },
+            bindChangeSelect(){
+                this.isSelect = !this.isSelect;
+                this.isDitch = false;
+            },
+            bindChangeDitch(){
+                this.isDitch = !this.isDitch;
+                this.isSelect = false;
             }
         },
         components:{

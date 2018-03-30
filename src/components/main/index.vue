@@ -40,13 +40,18 @@
                     <h2 v-if="isView2">{{nav[view1].child[view2].txt}}</h2>
                 </div>
                 <div class="admin-main-right-box">
-                    <ditch v-if="view1 == 0 && view2 == 0" :showView = "nav[selectView[0]].view[selectView[1]]"></ditch>
-                    <popu-resource v-if="view1 == 0 && view2 == 2" :showView = "nav[selectView[0]].view[selectView[1]]"></popu-resource>
-                    <fixed-ditch @getChild="setView" v-if="view1 == 1 && view2 == 0"></fixed-ditch>
-                    <lively-resource v-if="view1 == 3 && view2 == 0"></lively-resource>
-                    <resource-details v-if="view1 == 3 && view2 == 1"></resource-details>
-                    <affair-analyze v-if="view1 == 3 && view2 == 2"></affair-analyze>
-                    <course-change v-if="view1 == 4 && view2 == 0"></course-change>
+                    <!-- <ditch v-if="view1 == 0 && view2 == 0" :showView = "nav[selectView[0]].view[selectView[1]]"></ditch> -->
+                    <!-- 1 -->
+                    <!-- <popu-resource v-if="view1 == 0 && view2 == 2" :showView = "nav[selectView[0]].view[selectView[1]]"></popu-resource> -->
+                    <lively-resource v-if="view1 == 0 && view2 == 0"></lively-resource>
+                    <resource-details v-if="view1 == 0 && view2 == 1"></resource-details>
+                    <affair-analyze v-if="view1 == 0 && view2 == 2"></affair-analyze>
+                    <!-- 2 -->
+                    <ditchs-box v-if="view1 == 1 && view2 == 0"></ditchs-box>
+                    <ditch-medium-box v-if="view1 == 1 && view2 == 1"></ditch-medium-box>
+                    <popularize-box v-if="view1 == 1 && view2 == 2"></popularize-box>
+                    <!-- 3 -->
+                    <course-change v-if="view1 == 2 && view2 == 0"></course-change>
                 </div>
             </div>
         </div>
@@ -55,11 +60,22 @@
 <script>
 import mainNav from "./mainNav"
 import ditch from "./ditch"
+
 import popuResource from "./popuResource"
-import fixedDitch from "./fixedDitch"
+
+// 1-1
 import livelyResource from "./livelyResource"
+// 1-2
 import resourceDetails from "./resourceDetails"
+// 1-3
 import affairAnalyze from "./affairAnalyze"
+// 2-1
+import ditchsBox from "./ditchsbox"
+// 2-2
+import ditchMediumBox from "./ditchMediumBox"
+// 2-3
+import popularizeBox from "./popularizeBox"
+// 3-1
 import courseChange from "./courseChange"
 // 引入全局状态
 import {mapActions} from "vuex";
@@ -78,10 +94,17 @@ export default {
             // 是否显示用户操作
             isUserEditIcon:false,
             nav:[
-                    {txt:"推广渠道管理",icon:"icon-tuiguangqudao",child:[{txt:"渠道组管理"},{txt:"渠道媒介管理"},{txt:"推广资源管理"}],view:[[{txt:"渠道组名称",type:"text"},{txt:"渠道组类型",type:"text"},{txt:"渠道组标识",type:"text"}],[],[{txt:"推广名称",type:"input"},{txt:"推广标识",type:"input"},{txt:"渠道选择",type:"select"},{txt:"广告关键词",type:"input"},{txt:"有效性",type:"radio"}]]},
-                    {txt:"固定渠道",icon:"icon-yuyuedengjilei"},
-                    {txt:"推广单页面管理",icon:"icon-mubiaoyemianliebiao"},
                     {txt:"推广统计分析",icon:"icon-tongji",child:[{txt:"活跃资源统计"},{txt:"资源详情分析"},{txt:"事件分析"},{txt:"事件管理"}]},
+                    {txt:"推广渠道管理",icon:"icon-tuiguangqudao",
+                        child:[
+                            {txt:"渠道组管理"},{txt:"渠道媒介管理"},{txt:"推广资源管理"}
+                        ],
+                        view:[
+                                [{txt:"渠道组名称",type:"text"},{txt:"渠道组类型",type:"text"},{txt:"渠道组标识",type:"text"}]
+                                ,[],
+                                [{txt:"推广名称",type:"input"},{txt:"推广标识",type:"input"},{txt:"渠道选择",type:"select"},{txt:"广告关键词",type:"input"},{txt:"有效性",type:"radio"}]
+                            ]
+                    },
                     {txt:"进程管理",icon:"icon-qiehuan1"}
                 ]
         }
@@ -103,7 +126,7 @@ export default {
             this.isUserEditIcon = false;
         });
         // ajax 加载 推广资源和渠道组数据
-        this.$axios.post("http://api.wildog.cn/active/getSelect").then((res)=>{
+        this.$axios.post(webUrl+"/active/getSelect").then((res)=>{
             let web = res.data.data.web_name;
             web[0] = "全部";
             let group = res.data.data.group;
@@ -121,19 +144,27 @@ export default {
             this.isUserEditIcon = !this.isUserEditIcon;
         },
         setView(){
-            this.selectView = [0,0]
+            this.selectView = [0,0];
         },
         ...mapActions(['setWeb','setGroup'])
     },
     components:{
+        // 左边导航栏
         mainNav:mainNav,
-        ditch:ditch,
-        popuResource:popuResource,
-        fixedDitch:fixedDitch,
+        // 推广统计分析 1 活跃资源统计
         livelyResource:livelyResource,
-        courseChange:courseChange,
+        // 推广统计分析 2 资源详情分析
         resourceDetails:resourceDetails,
-        affairAnalyze:affairAnalyze
+        // 推广统计分析 3 事件分析
+        affairAnalyze:affairAnalyze,
+        // 推广渠道管理 1 渠道组管理
+        ditchsBox:ditchsBox,
+        // 推广渠道管理 2 渠道媒介管理
+        ditchMediumBox:ditchMediumBox,
+        // 推广渠道管理 3 推广资源管理
+        popularizeBox:popularizeBox,
+        // 进程管理
+        courseChange:courseChange
     }
 }
 </script>
@@ -160,6 +191,7 @@ body {
 
 .admin-logo {
     height: 70px;
+    transform: scale(.75) translateX(-30px);
 }
 
 .admin-user-box {

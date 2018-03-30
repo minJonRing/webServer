@@ -1,8 +1,10 @@
 html,
 body {
+    height: 100%;
     font-size: 14px;
     font-family: "Lucida Grande", Helvetica, Arial, sans-serif, "微软雅黑", "Microsoft YaHei", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, 'helvetica neue', tahoma, 'hiragino sans gb', 'wenquanyi micro hei', "宋体";
     min-height: 100%;
+    overflow-x: hidden;
 }
 
 * {
@@ -588,4 +590,149 @@ a:hover {
 
 .table-box {
     padding: 12px 0;
+}
+
+
+/* input */
+
+
+/* inputText */
+
+.inputText {
+    width: 720px;
+    font-size: 0;
+    text-align: right;
+    padding: 12px 0;
+}
+
+.inputText * {
+    display: inline-block;
+    font-size: 14px;
+}
+
+.inputText span {
+    color: #fa2323;
+}
+
+.inputText p {
+    padding: 0 12px;
+    color: #333;
+}
+
+.inputText input {
+    width: 320px;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px #e4e4e4 solid;
+    border-radius: 6px;
+    color: #333;
+}
+
+.inputText input:focus {
+    /* outline-color: #23cb5c; */
+}
+
+.inputText i {
+    width: 260px;
+}
+
+
+/* inputSelect */
+
+.inputSelect {
+    position: relative;
+    width: 720px;
+    font-size: 0;
+    text-align: right;
+    padding: 12px 0;
+}
+
+.inputSelect * {
+    display: inline-block;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.inputSelect span {
+    color: #fa2323;
+}
+
+.inputSelect p {
+    padding: 0 12px;
+    color: #333;
+}
+
+.inputSelect .input-box {
+    position: relative;
+    z-index: 2;
+}
+
+.inputSelect .input-box .copyModel {
+    position: relative;
+    width: 320px;
+    height: 46px;
+    line-height: 46px;
+    padding: 0 12px;
+    text-align: left;
+    border: 1px #e4e4e4 solid;
+    border-radius: 6px;
+    color: #333;
+}
+
+.inputSelect .input-box ul {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 320px;
+    padding: 3px 12px;
+    border: 1px #e4e4e4 solid;
+    border-radius: 6px;
+    text-align: left;
+    background-color: #fff;
+    opacity: 0;
+    transition-duration: 600ms;
+    transform: matrix(1, 0, 0, 1, 20, 0);
+    pointer-events: none;
+}
+
+.inputSelect .input-box .show-select {
+    opacity: 1;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    pointer-events: auto;
+}
+
+.inputSelect .input-box ul li {
+    width: 100%;
+    padding: 6px 0;
+    color: #666;
+    border-bottom: 1px #f5f5f5 dashed;
+    transition-duration: 600ms;
+    cursor: pointer;
+}
+
+.inputSelect .input-box ul li:hover {
+    background-color: #fafafa;
+}
+
+.inputSelect .input-box ul li:last-child {
+    border: none;
+}
+
+.inputSelect i {
+    width: 260px;
+}
+
+.inputSelect .icon {
+    position: absolute;
+    width: auto;
+    right: 10px;
+    top: 14px;
+    color: #999;
+    transition-duration: 600ms;
+    transform: rotate(180deg);
+}
+
+.inputSelect .rotate-icon {
+    transform-origin: 50% 50%;
+    transform: rotate(0deg);
 }

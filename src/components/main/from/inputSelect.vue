@@ -2,11 +2,11 @@
     <div class="inputSelect">
         <span>*</span>
         <p>{{elName}}</p>
-        <div class="input-box" :class="{'is-hide':!isShowSelect}">
+        <div class="input-box">
             <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowSelect}"></i>
-            <div class="copyModel" @click="isShowSelect = !isShowSelect">{{txt}}</div>
-            <ul :class="{'show-select':isShowSelect}">
-                <li v-for="(item,index) in list" :key="index" @click="selectTxt($event,item.txt)">{{item.txt}}</li>
+            <div class="copyModel" @click="isShowSelect = !isShowSelect">{{cont}}</div>
+            <ul :class="{'show-select':isShowSelect}" @click.stop>
+                <li v-for="(val,key,index) in list" :key="index" @click="selectTxt($event,{name:val,key:key})">{{val}}</li>
             </ul>
         </div>
         <i></i>
@@ -16,22 +16,23 @@
 <script>
     export default {
         name:"inputSelect",
-        props:{
-            propType:Object,
-            elName:String
-        },
+        props:['propType','elName','list','txt'], //txt是数字
         data(){
             return {
                 isShowSelect:false,
-                txt:"",
-                list:[{txt:'1'},{txt:'2'},{txt:'3'},{txt:'4'},{txt:'1'},{txt:'1'}]
+                cont:"请选择"
+            }
+        },
+        watch:{
+            "txt":function(val){
+                this.cont = this.list[val];
             }
         },
         methods:{
             selectTxt(event,val){
-                this.txt = val;
+                this.cont = val.name;
                 this.isShowSelect = false
-                this.$emit("getSelect",{type:this.propType.type,txt:this.txt})
+                this.$emit("getSelect",{type:this.propType.type,name:val.key})
             },
         }
     }
@@ -73,9 +74,6 @@
     border-radius: 6px;
     color: #333;
 }
-.inputSelect .is-hide{
-    overflow: hidden;
-}
 .inputSelect .input-box ul {
     position: absolute;
     top: 50px;
@@ -89,10 +87,12 @@
     opacity: 0;
     transition-duration: 600ms;
     transform: matrix(1,0,0,1,20,0);
+    pointer-events: none;
 }
 .inputSelect .input-box .show-select {
     opacity: 1;
     transform: matrix(1,0,0,1,0,0);
+    pointer-events: auto;
 }
 .inputSelect .input-box ul li {
     width: 100%;

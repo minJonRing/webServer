@@ -81,15 +81,25 @@ export default {
   methods:{
     ...mapActions(['setUser','setHint']),
     login(){
-      this.setUser(2)
-      this.setHint({txt:"登录成功",className:"hint-success"})
-      this.$router.push({path:"/app/main"})
-      return;  
-      this.$axios.post('/app/adminLogin',{username:this.username,password:this.password}).then((res)=>{
-        console.log(res)
-        this.setUser(res)
-        this.$router.push({path:"/main"})
-      })
+        
+        this.username = "admin";this.password = 111111;
+        let _this = this;
+        if(this.isVerify && this.username && this.password){
+            let data = {username:this.username,password:this.password}
+            $.ajax({
+                url:webUrl+'/auth/login',
+                type:"POST",
+                data:data,
+                dataType:"JSON",
+                success:function(res){
+                    _this.setUser(res.data);
+                    localStorage.setItem('time',Date.now());
+                    _this.$router.push({path:"/app/main"})
+                    _this.setHint({txt:"登录成功",className:"hint-success"})
+                }
+            })
+            
+        }
     }
   }
 }

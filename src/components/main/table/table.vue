@@ -86,6 +86,9 @@ window.tqr;
         mounted(){
             // this.initData = dataClassification(ajaxData)
             // console.log(this.initData)
+            document.body.addEventListener("click",()=>{
+                this.filetrArr[3].sort = false;
+            })
         },
         watch:{
             // 监听事件选项变化(事件选项变化 改变 用户展示数据)  

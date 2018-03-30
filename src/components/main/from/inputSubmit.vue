@@ -1,13 +1,14 @@
 <template>
   <div class="inputSubmit">
       <div class="input-submit">
-        <a href="javasctipy:" @click="ajaxSubmit">提交</a>
+        <a href="javasctipy:" @click="ajaxSubmit" :style="{'background-color':color}">{{txt}}</a>
       </div>
   </div>
 </template>
 <script>
     export default {
         name:"inputSubmit",
+        props:['txt','color'],
         data(){
             return {
             }
@@ -22,15 +23,19 @@
 
 <style scoped>
 /*提交按钮*/
+.inputSubmit{
+    display: inline-block;
+}
 .input-submit {
-    width: 720px;
+    /* width: 720px; */
+    display: inline-block;
     padding: 12px 0;
     text-align: right;
 }
 .input-submit a{
     display: inline-block;
     width: 120px;
-    margin-right:460px;
+    /* margin-right:460px; */
     text-align: center;
     border-radius: 5px;
     line-height: 46px;
