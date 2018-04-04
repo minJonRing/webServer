@@ -45,7 +45,10 @@
             select(event,val){
                 this.navChildIndex = val;
                 let i = event.target.dataset.select;
-                this.concatIndex = i;
+                this.concatIndex = '3-0';
+                setTimeout(()=>{
+                    this.concatIndex = i;
+                },1)
             }
         }
     }
@@ -60,7 +63,9 @@
 .admin-one-li {
     border-bottom: 1px #e8e8e8 solid;
 }
-
+.admin-one-li:last-child {
+    border: none;
+}
 .admin-one-a {
     display: flex;
     align-content: center;

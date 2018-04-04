@@ -59,11 +59,42 @@ export default {
       inputMax:0
     }
   },
+  beforeCreate(){
+    let _this  = this;
+    if(localStorage.getItem("time") && ( Date.now() - localStorage.getItem("time") ) <  72000000){
+        if(localStorage.getItem("token") && localStorage.getItem("xxx")){
+            $.ajax({
+                url:webUrl+"/auth/getInfo",
+                type:"POST",
+                data:{auth_token:localStorage.getItem("token")},
+                dataType:"JSON",
+                success:(res)=>{
+                    if(res.status == 1){
+                        localStorage.setItem("xxx",1)
+                        _this.setUser(res.data)
+                        _this.$router.push({path:"/app/main"})
+                        _this.setHint({txt:"登录成功",className:"hint-success"})
+                    }else{
+                        localStorage.removeItem("time")
+                        localStorage.removeItem("token")
+                        localStorage.removeItem("xxx")
+                        _this.setHint({txt:"账号数据异常",className:"hint-error"})
+                    }
+                }
+            })
+        }
+    }else{
+        localStorage.removeItem("time")
+        localStorage.removeItem("token")
+        localStorage.removeItem("xxx")
+    }
+  },
   mounted(){
     document.querySelector('.range').addEventListener("mouseup",()=>{
         this.range = 0;
     })
     this.inputMax = document.querySelectorAll('.verify-bar .range')[0].clientWidth-50;
+    
   },
   watch:{
      'range':function(val){
@@ -81,11 +112,17 @@ export default {
   methods:{
     ...mapActions(['setUser','setHint']),
     login(){
-        
-        this.username = "admin";this.password = 111111;
+        if(!this.username){
+            this.setHint({txt:"请输入账号",className:"hint-error"})
+            return ;
+        }else if(!this.password){
+            this.setHint({txt:"请输入密码",className:"hint-error"})
+            return ;
+        }else if(!this.isVerify){
+            this.setHint({txt:"请完成验证",className:"hint-error"})
+            return ;
+        }
         let _this = this;
-        this.$router.push({path:"/app/main"})
-        return ;
         if(this.isVerify && this.username && this.password){
             let data = {username:this.username,password:this.password}
             $.ajax({
@@ -94,11 +131,38 @@ export default {
                 data:data,
                 dataType:"JSON",
                 success:function(res){
-                    console.log(1)
-                    _this.setUser(res.data);
-                    localStorage.setItem('time',Date.now());
-                    _this.$router.push({path:"/app/main"})
-                    _this.setHint({txt:"登录成功",className:"hint-success"})
+                    if(res.status){
+                        localStorage.setItem("time",Date.now());
+                        let token = res.data.auth_token;
+                        $.ajax({
+                            url:webUrl+"/auth/getInfo",
+                            type:"POST",
+                            data:{auth_token:res.data.auth_token},
+                            dataType:"JSON",
+                            success:(res)=>{
+                                if(res.status == 1){
+                                    if(_this.isShowSave){
+                                        localStorage.setItem("save",1)
+                                        sessionStorage.removeItem("save")
+                                    }else{
+                                        localStorage.removeItem('save');
+                                        sessionStorage.setItem("save",1)
+                                    }
+                                    localStorage.setItem("token",token)
+                                    localStorage.setItem("xxx",1)
+                                    _this.setUser(res.data)
+                                    _this.$router.push({path:"/app/main"})
+                                    _this.setHint({txt:"登录成功",className:"hint-success"})
+                                }else{
+                                    _this.setHint({txt:"账号数据异常",className:"hint-error"})
+                                }
+                            }
+                        })
+                       
+                    }else{
+                        _this.setHint({txt:"账号或密码错误",className:"hint-error"})
+                    }
+                    
                 }
             })
             

@@ -13,16 +13,13 @@
                         <i class="iconfont icon-zheng-triangle" :class="{'admin-user-edit-icon':isUserEditIcon}"></i>
                     </div>
                     <div class="admin-user-edit" :class="{'admin-user-edit-show':isUserEditIcon}">
-                        <ul>
-                            <li><a href="javascript:">修改密码</a></li>
-                            <li><a href="javascript:">修改密码</a></li>
-                            <li><a href="javascript:">修改密码</a></li>
-                            <li><a href="javascript:">修改密码</a></li>
+                        <ul @click.stop>
+                            <li><a href="javascript:" @click.stop="bindRePass">修改密码</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="admin-user-logout">
-                    <a href="javascript:">
+                    <a href="javascript:" @click="bindLogout">
                         <img src="./images/logout.png" alt="">
                         <span>退出</span>
                     </a>
@@ -40,9 +37,7 @@
                     <h2 v-if="isView2">{{nav[view1].child[view2].txt}}</h2>
                 </div>
                 <div class="admin-main-right-box">
-                    <!-- <ditch v-if="view1 == 0 && view2 == 0" :showView = "nav[selectView[0]].view[selectView[1]]"></ditch> -->
                     <!-- 1 -->
-                    <!-- <popu-resource v-if="view1 == 0 && view2 == 2" :showView = "nav[selectView[0]].view[selectView[1]]"></popu-resource> -->
                     <lively-resource v-if="view1 == 0 && view2 == 0"></lively-resource>
                     <resource-details v-if="view1 == 0 && view2 == 1"></resource-details>
                     <affair-analyze v-if="view1 == 0 && view2 == 2"></affair-analyze>
@@ -52,17 +47,33 @@
                     <popularize-box v-if="view1 == 1 && view2 == 2"></popularize-box>
                     <!-- 3 -->
                     <course-change v-if="view1 == 2 && view2 == 0"></course-change>
+                    <!-- 4 -->
+                    <div v-if="view1 == 4 && view2 == 4"></div>
                 </div>
+            </div>
+        </div>
+        <div class="admin-hint" v-show="isShowRe" @click="isShowRe = false">
+            <div class="admin-hint-main" @click.stop>
+                <p class="admin-hint-title">修改密码</p>
+                <div class="admin-hint-box">
+                    <p><i>*</i><span>原密码</span></p>
+                    <input type="text" v-model="initPass" placeholder="请输入密码">
+                </div>
+                <div class="admin-hint-box">
+                    <p><i></i><span>新密码</span></p>
+                    <input type="text" v-model="newPass" placeholder="请输入新密码">
+                </div>
+                <div class="admin-hint-box">
+                    <p><i></i><span>确认密码</span></p>
+                    <input type="text" v-model="rePass" placeholder="请再次输入新密码">
+                </div>
+                <a class="admin-hint-submit" href="javascript:" @click="bindRePassSubmit">提交</a>
             </div>
         </div>
     </div>
 </template>
 <script>
 import mainNav from "./mainNav"
-import ditch from "./ditch"
-
-import popuResource from "./popuResource"
-
 // 1-1
 import livelyResource from "./livelyResource"
 // 1-2
@@ -105,8 +116,14 @@ export default {
                                 [{txt:"推广名称",type:"input"},{txt:"推广标识",type:"input"},{txt:"渠道选择",type:"select"},{txt:"广告关键词",type:"input"},{txt:"有效性",type:"radio"}]
                             ]
                     },
-                    {txt:"进程管理",icon:"icon-qiehuan1"}
-                ]
+                    {txt:"进程管理",icon:"icon-qiehuan1"},
+                    {txt:''}
+                ],
+            // 显示修改密码界面
+            isShowRe:false,
+            initPass:"",
+            newPass:"",
+            rePass:""
         }
     },
     watch:{
@@ -137,8 +154,7 @@ export default {
     },
     methods:{
         navI(val){
-            console.log(val)
-            this.selectView = val.split('-');
+            this.selectView =  val.split('-');
         },
         showUserEdit(){
             this.isUserEditIcon = !this.isUserEditIcon;
@@ -146,7 +162,61 @@ export default {
         setView(){
             this.selectView = [0,0];
         },
-        ...mapActions(['setWeb','setGroup'])
+        ...mapActions(['setWeb','setGroup','setHint']),
+        bindLogout(){
+            $.ajax({
+                url:webUrl+"/auth/logout",
+                type:"POST",
+                data:{auth_token:localStorage.getItem("token")},
+                dataType:"JSON",
+                success:(res)=>{
+                    localStorage.removeItem("token")
+                    localStorage.removeItem("xxx")
+                    localStorage.removeItem("time")
+                    this.$router.push({path:"/"})
+                    this.setHint({txt:"退出成功",className:"hint-success"})
+                }
+            })
+            
+        },
+        bindRePass(){
+            this.isShowRe = true;
+        },
+        bindRePassSubmit(){
+            if(!this.initPass){
+                this.setHint({txt:"请输入密码",className:"hint-error"})
+                return ;
+            }else if(!this.newPass){
+                this.setHint({txt:"请输入请密码",className:"hint-error"})
+                return ;
+            }else if(!this.rePass){
+                this.setHint({txt:"请再次输入新密码",className:"hint-error"})
+                return ;
+            }
+            $.ajax({
+                url:webUrl+"/auth/change",
+                type:"POST",
+                data:{
+                    auth_token:localStorage.getItem("token"),
+                    password:this.initPass,
+                    new_password:this.newPass,
+                    re_password:this.rePass
+                },
+                dataType:"JSON",
+                success:(res)=>{
+                    if(res.status==1){
+                        localStorage.removeItem("token")
+                        localStorage.removeItem("xxx")
+                        localStorage.removeItem("time")
+                        this.$router.push({path:"/"})
+                        this.setHint({txt:"密码修改成功",className:"hint-success"})
+                    }else{
+                        this.setHint({txt:res.msg,className:"hint-success"})
+                    }
+                }
+            })
+            // this.isShowRe = false;
+        }
     },
     components:{
         // 左边导航栏
@@ -225,16 +295,20 @@ body {
     position: absolute;
     top: 53px;
     width: 100%;
-    height: 0;
     background-color: #42516a;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     line-height: 40px;
     overflow: hidden;
+    opacity: 0;
     transition-duration: 600ms;
+    transform: matrix(1,0,0,1,20,0);
+    pointer-events: none;
 }
 .admin-user-edit-show {
-    height: 163px;
+    pointer-events: auto;
+    opacity: 1;
+    transform: matrix(1,0,0,1,0,0);    
 }
 .admin-user-edit li {
     border-bottom: 1px #fff dashed;
@@ -244,7 +318,10 @@ body {
     border: none;
 }
 .admin-user-edit a {
+    display: inline-block;
+    width: 100%;
     color: #fff;
+    height: 100%;
 }
 .admin-user-edit li:hover {
     background-color: #1d2c46;
@@ -327,5 +404,63 @@ body {
 /**/
 .sourse {
     height: 100%;
+}
+/**/
+.admin-hint {
+    position:absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,.6);
+    z-index: 99;
+    font-size: 12px;
+    color: #333;
+}
+.admin-hint-main {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 24px;
+}
+.admin-hint-title {
+    font-size: 18px;
+    text-align: left;
+    padding-bottom:18px;
+}
+.admin-hint-box {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+}
+.admin-hint-box i {
+    color: red;
+}
+.admin-hint-box p {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 12px;
+    font-size: 14px;
+    width: 100px;
+}
+
+.admin-hint-box input {
+    border: none;
+    padding: 7px 12px;
+    border: 1px #e4e4e4 solid;
+    border-radius: 3px;
+}
+.admin-hint-submit {
+    display: inline-block;
+    width: 195px;
+    line-height: 31px;
+    background-color: #70ca10;
+    color: #fff;
+    font-size: 14px;
+    margin-left: 100px;
+    border-radius: 3px;
 }
 </style>

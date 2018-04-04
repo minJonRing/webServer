@@ -37,10 +37,7 @@
 </template>
 
 <script>
-    import inputText from "./from/inputText"
     import inputSubmit from "./from/inputSubmit"
-    import inputSelect from "./from/inputSelect"
-    import inputRadio from "./from/inputRadio"
     import bus from "./js/a.js"
     import {mapActions} from "vuex"
     export default {
@@ -105,6 +102,16 @@
             ...mapActions(['setHint']),
             // 发送ajax请求
             bindCreate(){
+                if(!this.ajaxType){
+                    this.setHint({txt:"请选择渠道组类型",className:"hint-error"})
+                    return ;
+                }else if(!this.name){
+                    this.setHint({txt:"请输入渠道组名称",className:"hint-error"})
+                    return ;
+                }else if(!this.icon){
+                    this.setHint({txt:"请输入渠道组标识",className:"hint-error"})
+                    return ;
+                }
                 let _this = this;
                 let _data = {name:this.name,type:this.ajaxType,identifying:this.icon}
                 if(this.ajaxId){

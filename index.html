@@ -44,6 +44,13 @@
             document.title = TITLE;
         }
     })
+    window.onunload = () => {
+        if (!localStorage.getItem("save") && !sessionStorage.getItem("save")) {
+            localStorage.removeItem("token")
+            localStorage.removeItem("xxx")
+            localStorage.removeItem("time")
+        }
+    }
 </script>
 
 </html>

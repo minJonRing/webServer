@@ -116,6 +116,19 @@
             ...mapActions(['setHint']),
             // 发送ajax请求
             bindCreate(){
+                if(!this.ajaxType){
+                    this.setHint({txt:"请选择渠道组类型",className:"hint-error"});
+                    return ;
+                }else if(!this.name){
+                    this.setHint({txt:"请输入渠道组名称",className:"hint-error"});
+                    return ;
+                }else if(!this.icon){
+                    this.setHint({txt:"请输入渠道组标识",className:"hint-error"});
+                    return ;
+                }else if(!this.matchIcon){
+                    this.setHint({txt:"请输入渠道组匹配标识",className:"hint-error"});
+                    return ;
+                }
                 let _this = this;
                 let _data = {name:this.name,type:this.ajaxType,identifying:this.icon,pattern:this.matchIcon}
                 if(this.ajaxId){

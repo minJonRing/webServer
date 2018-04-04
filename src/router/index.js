@@ -29,27 +29,27 @@ vueRouter.beforeEach((to,from,next)=>{
   console.log(to)
   console.log(from)
   
-  // if(to.path == "/app/main"){
-  //   console.log(vueRouter.app.$store)
-  //   console.log(vueRouter.app)
-  //   if(vueRouter.app.$store && vueRouter.app.$store.state.userId && (Date.now()-localStorage.getItem("time") <7200000)){
-  //     console.log(2)
-  //     next()
-  //   }else{
-  //     next('/')
-  //   }
-  // }else if(to.name == "Index" && from.name == "Main"){
-  //   if(vueRouter.app.$store && !vueRouter.app.$store.state.userId){
-  //     next()
-  //   }else{
-  //     next(false)
-  //   }
-  // }else {
-  //   console.log(3)
-  //   next()
-  // }
-  next()
-
+  if(to.path == "/app/main"){
+    if(localStorage.getItem("xxx") == 1 && localStorage.getItem("token") && (Date.now()-localStorage.getItem("time") <7200000)){
+      next()
+    }else{
+      localStorage.removeItem("token")
+      localStorage.removeItem("xxx")
+      localStorage.removeItem("time")
+      next('/')
+    }
+  }else if(to.path == "/" && from.path == "/app/main"){
+    if(localStorage.getItem("xxx") == 1&& localStorage.getItem("token") && (Date.now()-localStorage.getItem("time") <7200000)){
+      next(false)
+    }else{
+      localStorage.removeItem("token")
+      localStorage.removeItem("xxx")
+      localStorage.removeItem("time")
+      next()
+    }
+  }else {
+    next()
+  }
 })
 
 export default vueRouter;
