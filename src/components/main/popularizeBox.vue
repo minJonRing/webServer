@@ -1,12 +1,12 @@
 <template>
     <div class="popularize-box">
-        <ditchlist @getChild="setFather" :searchData="searchData" :searchTitle="searchTitle" :searchUrl="searchUrl" v-show="isShowList"></ditchlist>
+        <populist @getChild="setFather" :popu="popu" :searchData="searchData" :searchTitle="searchTitle" :searchUrl="searchUrl" v-show="isShowList"></populist>
         <popu @getChild="setFather" :searchUrl="searchUrl" :popu="popu"  v-show="!isShowList"></popu>
     </div>
 </template>
 
 <script>
-    import ditchlist from "./ditchlist"
+    import populist from "./popuList"
     import popu from "./popu"
 
     export default {
@@ -16,7 +16,7 @@
             return {
                 isShowList:true,
                 searchData:[{name:"渠道媒介名称",value:""},{name:"渠道媒介标识",value:""}],
-                searchTitle:[{name:"渠道组"},{name:"渠道组媒介"},{name:"url链接"},{name:"关键词"}],
+                searchTitle:[{name:"渠道组"},{name:"渠道组媒介"},{name:"资源名字"},{name:"url链接"},{name:"关键词"}],
                 searchUrl:`${webUrl}/resource/`,
                 popu:""
             }
@@ -42,7 +42,7 @@
             }
         },
         components:{
-            ditchlist:ditchlist,
+            populist:populist,
             popu:popu
         }
     }

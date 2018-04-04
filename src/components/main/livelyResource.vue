@@ -42,15 +42,15 @@
             <div class="search-time-scope flex flex-mid">
                 <p>时间范围</p>
                 <div class="input-box-date" >
-                    <input v-show="rangeVal == 'day'" type="text" id="laydaystart" name="daystart" readonly="readonly" placeholder="请选择起始时间">
-                    <input v-show="rangeVal == 'month'" type="text" id="laymonthstart" name="monthstart" readonly="readonly" placeholder="请选择起始时间">
-                    <input v-show="rangeVal == 'year'" type="text" id="layyearstart" name="yearstart" readonly="readonly" placeholder="请选择起始时间">
+                    <input type="text" id="laydaystart" name="daystart" readonly="readonly" placeholder="请选择起始时间">
+                    <!-- <input v-show="rangeVal == 'month'" type="text" id="laymonthstart" name="monthstart" readonly="readonly" placeholder="请选择起始时间">
+                    <input v-show="rangeVal == 'year'" type="text" id="layyearstart" name="yearstart" readonly="readonly" placeholder="请选择起始时间"> -->
                 </div>
                 <p>—</p>
                 <div class="input-box-date">
-                    <input v-show="rangeVal == 'day'" type="text" id="laydayend" name="dayend" readonly="readonly" placeholder="请选择结束时间">
-                    <input v-show="rangeVal == 'month'" type="text" id="laymonthend" name="monthend" readonly="readonly" placeholder="请选择结束时间">
-                    <input v-show="rangeVal == 'year'" type="text" id="layyearend" name="yearend" readonly="readonly" placeholder="请选择结束时间">
+                    <input type="text" id="laydayend" name="dayend" readonly="readonly" placeholder="请选择结束时间">
+                    <!-- <input v-show="rangeVal == 'month'" type="text" id="laymonthend" name="monthend" readonly="readonly" placeholder="请选择结束时间">
+                    <input v-show="rangeVal == 'year'" type="text" id="layyearend" name="yearend" readonly="readonly" placeholder="请选择结束时间"> -->
                 </div>
             </div>
             <div class="search-submit">
@@ -65,10 +65,50 @@
 
 <script>
     import VTable from './table/table';
-    import ajaxData from "./table/ajax";
+    import {listen,set_start,set_end} from "./table/ajax.js"
     import {mapGetters,mapActions} from "vuex";
-// console.log(laydate)
-    
+
+    var now = new Date();
+    var default_option = {
+                    start_min: {
+                        year: 1970,
+                        month: 0,
+                        date: 1,
+                    },
+                    start_max: {
+                        'date': {
+                            'year': now.getFullYear(),
+                            'month': now.getMonth(),
+                            'date': now.getDate()
+                        },
+                        'month': {
+                            'year': now.getFullYear(),
+                            'month': now.getMonth()
+                        },
+                        'year': {
+                            'year': now.getFullYear()
+                        }
+                    },
+                    end_min: {
+                        year: 1970,
+                        month: 0,
+                        date: 1,
+                    },
+                    end_max: {
+                        'date': {
+                            'year': now.getFullYear(),
+                            'month': now.getMonth(),
+                            'date': now.getDate()
+                        },
+                        'month': {
+                            'year': now.getFullYear(),
+                            'month': now.getMonth()
+                        },
+                        'year': {
+                            'year': now.getFullYear()
+                        }
+                    },
+                }
     export default {
         name:"lively-resource",
         data(){
@@ -82,58 +122,131 @@
                 ditchList:"",
                 ditch:0,
                 selectRange:[
-                    {name:"day",id:"day",txt:"天"},
+                    {name:"day",id:"date",txt:"天"},
                     {name:"month",id:"month",txt:"月"},
                     {name:"year",id:"year",txt:"年"},
                 ],
-                rangeVal:'day',
-                tableData:""
+                rangeVal:'date',
+                tableData:"",
+                start_laydate:"",
+                end_laydate:"",
+                dataType : {
+                    "date": 'yyyy-MM-dd',
+                    "month": 'yyyy-MM',
+                    "year": 'yyyy',
+                },
+                
             }
         },
         mounted(){
             // 天数选择
-            let nowDate = new Date(),nowYear = nowDate.getFullYear(),nowMonth = nowDate.getMonth()+1,nowDay = nowDate.getDate()
-            var startDay =  laydate.render({elem: "#laydaystart",max:nowYear+'-'+nowMonth+'-'+nowDay,done:function(value,dates){
-                endDay.config.min ={year:dates.year,month:dates.month-1,date: dates.date}
-                endDay.config.max ={year:dates.year,month:dates.month-1,date: nowDay}
-            }});
-            var endDay =  laydate.render({elem: "#laydayend",max:nowYear+'-'+nowMonth+'-'+nowDay,done:function(value,dates){
-                startDay.config.min ={year:dates.year,month:dates.month-1,date: 1}
-                startDay.config.max ={year:dates.year,month:dates.month-1,date: dates.date}
-            }});
+            //常规用法
+            let _this = this;
+            
+            var type = this.rangeVal;
+            var $start_date = $("#laydaystart"),$end_date = $("#laydayend");
+            this.start_laydate = laydate.render({
+                elem: "#laydaystart",
+                max: 0,
+                type: type,
+                format: 'yyyy-MM-dd',
+                showBottom: true,
+                btns:["clear"],
+                done: function (value, date, endDate) {
+                    set_start($start_date,value, date, endDate,_this.rangeVal,_this.end_laydate,now)
+                    if ($start_date.val() == ''){
+                        _this.end_laydate.config.min = default_option['end_min'];
+                        _this.end_laydate.config.max = default_option['end_max'][_this.rangeVal];
+                    }
+                },
+                change: function (value,date,endDate) {
+                    $start_date.val(value,date);
+                    set_start($start_date,value, date, endDate,_this.rangeVal,_this.end_laydate,now)
+                    $('.layui-laydate-list').on('click', 'li', function () {
+                        $('.layui-laydate').hide();
+                    });
+                    if ($start_date.val() == ''){
+                        _this.end_laydate.config.min = default_option['end_min'];
+                        _this.end_laydate.config.max = default_option['end_max'][_this.rangeVal];
+                    }
+                }
+            });
+            this.end_laydate = laydate.render({
+                elem: "#laydayend",
+                type: type,
+                max: 0,
+                format: 'yyyy-MM-dd',
+                showBottom: true,
+                btns:["clear"],
+                done: function (value, date, endDate) {
+                    set_end($end_date,value, date, endDate,_this.rangeVal,_this.start_laydate);
+                    if ($end_date.val() == ''){
+                        _this.start_laydate.config.min = default_option['end_min'];
+                        _this.start_laydate.config.max = default_option['end_max'][_this.rangeVal];
+                    }
+                },
+                change: function (value,date,endDate) {
+                    set_end($end_date,value, date, endDate,_this.rangeVal,_this.start_laydate);
+                    $end_date.val(value,date);
+                    $('.layui-laydate-list').on('click', 'li', function () {
+                        $('.layui-laydate').hide();
+                    });
+                    if ($end_date.val() == ''){
+                        _this.start_laydate.config.min = default_option['start_min'];
+                        _this.start_laydate.config.max = default_option['start_max'][_this.rangeVal];
+                    }
+                }
+            });
+            // let nowDate = new Date(),nowYear = nowDate.getFullYear(),nowMonth = nowDate.getMonth()+1,nowDay = nowDate.getDate()
+            // var startDay =  laydate.render({elem: "#laydaystart",max:nowYear+'-'+nowMonth+'-'+nowDay,done:function(value,dates){
+            //     let day = nowDay;
+            //     if(dates.month < nowMonth || dates.year < nowYear){
+            //         day = new Date(dates.year,dates.month,0).getDate();
+            //     }
+            //     endDay.config.min ={year:dates.year,month:dates.month-1,date: dates.date}
+            //     endDay.config.max ={year:dates.year,month:dates.month-1,date: day}
+            //     console.log(dates)
+            // }});
+            // var endDay =  laydate.render({elem: "#laydayend",max:nowYear+'-'+nowMonth+'-'+nowDay,done:function(value,dates){
+            //     startDay.config.min ={year:dates.year,month:dates.month-1,date: 1}
+            //     startDay.config.max ={year:dates.year,month:dates.month-1,date: dates.date}
+            // }});
             // 月份选择
-            var startMonth =  laydate.render({elem: "#laymonthstart",type: "month",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
-                endMonth.config.min ={year:dates.year,month:dates.month-1}
-                endMonth.config.max ={year:dates.year,month:nowMonth-1}
-                $('#laymonthstart').val(value);
-                $('body').click()
-            }});
-            var endMonth = laydate.render({elem: "#laymonthend",type: "month",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
-                startMonth.config.min ={year:dates.year,month:0}
-                startMonth.config.max ={year:dates.year,month:dates.month-1}
-                $('#laymonthend').val(value);
-                $('body').click()
-            }});
+            // var startMonth =  laydate.render({elem: "#laymonthstart",type: "month",max:nowYear+'-'+nowMonth+'-'+nowDay,showBottom: false,done:function(value, date, endDate){
+            //     console.log(value)
+                
+            // },change: function(value,dates){
+            //     $('#laymonthstart').val(value);
+            //     $('.layui-laydate').hide()
+            // }});
+            // var endMonth = laydate.render({elem: "#laymonthend",type: "month",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
+            //     $('#laymonthend').val(value);
+            //     $('body').click()
+            // }});
             // 年份选择
-            var startYear =  laydate.render({elem: "#layyearstart",type: "year",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
-                endYear.config.min ={year:dates.year}
-                $('#layyearstart').val(value);
-                $('body').click()
-            }});
-            var endYear = laydate.render({elem: "#layyearend",type: "year",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
-                startYear.config.max ={year:dates.year}
-                $('#layyearend').val(value);
-                $('body').click()
-            }});
+            // var startYear =  laydate.render({elem: "#layyearstart",type: "year",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
+            //     endYear.config.min ={year:dates.year}
+            //     $('#layyearstart').val(value);
+            //     $('body').click()
+            // }});
+            // var endYear = laydate.render({elem: "#layyearend",type: "year",max:nowYear+'-'+nowMonth+'-'+nowDay,change: function(value,dates){
+            //     startYear.config.max ={year:dates.year}
+            //     $('#layyearend').val(value);
+            //     $('body').click()
+            // }});
             // 点击body 隐藏多选框
             document.body.addEventListener('click',()=>{ 
                 this.isSelect = false;
                 this.isDitch = false;
             });
             // 
-            this.$axios.post(webUrl+"/active/getData").then((res)=>{
-                this.tableData = res.data.data.list;
-            }).catch((err)=>{
+            $.ajax({
+                url:webUrl+"/active/getData",
+                type:"POST",
+                dataType:"JSON",
+                success:(res)=>{
+                    this.tableData = res.data.list;
+                }
             })
             // 异步更新数据
             setTimeout(()=>{
@@ -142,6 +255,19 @@
             },1000)
         },
         watch:{
+            "rangeVal":function(val){
+                $("#laydaystart").val('');
+                $("#laydayend").val('');
+                this.start_laydate.config.type = val;
+                this.end_laydate.config.type = val;
+                this.start_laydate.config.format = this.dataType[val];
+                this.end_laydate.config.format = this.dataType[val];
+
+                this.end_laydate.config.min = default_option['end_min'];
+                this.end_laydate.config.max = default_option['end_max'][val];
+                this.start_laydate.config.min = default_option['start_min'];
+                this.start_laydate.config.max = default_option['start_max'][val];
+            }
         },
         computed:{
             ...mapGetters(['getWeb','getGroup'])
@@ -159,10 +285,8 @@
                 this.isDitch = false;
             },
             submitData(){
-                let startIdName = this.rangeVal == 'day'?"#laydaystart":this.rangeVal =='month'?"#laymonthstart":"#layyearstart";
-                let endIdName = this.rangeVal == 'day'?"#laydayend":this.rangeVal =='month'?"#laymonthend":"#layyearend";
-                let startTime = document.querySelector(startIdName).value;
-                let endTime = document.querySelector(endIdName).value;
+                let startTime = document.querySelector("#laydaystart").value;
+                let endTime = document.querySelector("#laydayend").value;
                 let data = {
                     web:this.selectKey,
                     search_engine:this.ditchKey,

@@ -5,20 +5,20 @@ function dataClassification(val){
             // 时间time
             el.time = i;
             //事件总数
-            el.affair = el.login + el.sign + el.order+el.order;
+            el.affair = el.login + el.sign + el.order+el.share;
             // 每一条数据的平均停留时长
             let averageDhms = el.visit != 0?(el.stayTime / el.visit).toFixed(0)-0:0;
             let averageTimeData = 0;
             if(averageDhms != 0){
-                let averageHours  = Math.floor((averageDhms%(60*60*24))/(60*60))?Math.floor((averageDhms%(60*60*24))/(60*60))+'h':'';
-                let averageMinutes  = Math.floor((averageDhms % (60 * 60)) /  60)? Math.floor((averageDhms % (60 * 60)) /  60)+'m':'';
+                let averageHours  = Math.floor(averageDhms/(60*60*24))?Math.floor(averageDhms/(60*60*24))+'h':'';
+                let averageMinutes  = Math.floor((averageDhms % (60*60*24)) /  60)? Math.floor((averageDhms % (60 * 60*24)) /  60)+'m':'';
                 let averageSeconds  = averageDhms % 60+'s';
                 averageTimeData = `${averageHours}${averageMinutes}${averageSeconds}`;
             }else{
                 averageTimeData = '无'
             }
             el.averageStay = averageTimeData;
-            // 每一天数据的停留时长
+            // 每一条数据的停留时长
             let dhms = el.stayTime;
             let timeData = 0;
             if(dhms != 0){
@@ -32,15 +32,15 @@ function dataClassification(val){
             }
             el.stayTime = timeData;
             // 每一条数据登录的转化率
-            el.affairLogin = el.visit != 0?(el.login / el.visit).toFixed(2)-0:0;
+            el.affairLogin = el.visit != 0?((el.login / el.visit)*100).toFixed(2):0;
             // 每一条数据注册的转化率
-            el.affairSign = el.visit != 0?(el.sign / el.visit).toFixed(2)-0:0;
+            el.affairSign = el.visit != 0?((el.sign / el.visit)*100).toFixed(2):0;
             // 每一条数据预约的转化率
-            el.affairOrder = el.visit != 0?(el.order / el.visit).toFixed(2)-0:0;
+            el.affairOrder = el.visit != 0?((el.order / el.visit)*100).toFixed(2):0;
             // 每一条数据share的转化率
-            el.affairShare = el.visit != 0?(el.share / el.visit).toFixed(2)-0:0;
+            el.affairShare = el.visit != 0?((el.share / el.visit)*100).toFixed(2):0;
             // 每一条数据所有事件的转化率
-            el.affairAll = el.visit != 0?(el.affair / el.visit).toFixed(2)-0:0;
+            el.affairAll = el.visit != 0?((el.affair / el.visit)*100).toFixed(2):0;
             // 添加的数组
             // oneArr.push(el)
             arr.push(el)

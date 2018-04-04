@@ -7,20 +7,6 @@
                     <input type="text" v-model="item.value" :placeholder="'请输入'+item.name">
                 </div>
             </div>
-            <!-- <div class="search-resource flex flex-mid">
-                <p>渠道组标识</p>
-                <div class="imitate-select">
-                    <div class="imitate-select-cont" @click.stop="isDitch = !isDitch">
-                        <p class="flex-1">{{ditchCont}}</p>
-                        <i class="iconfont icon-zheng-triangle" :class="{'recover':isDitch}"></i>
-                    </div>
-                    <div :class="['imitate-select-list',{'imitate-select-list-show':isDitch}]">
-                        <ul>
-                            <li v-for="(item,index) in ditchList" :key="index"><a href="javascript:" @click="copyDitch($event,item.txt)">{{item.txt}}</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div> -->
             <div class="search-submit">
                 <a href="javascript:" @click="submitBtn">查询</a>
             </div>
@@ -38,12 +24,12 @@
                     <td>操作</td>
                 </tr>
                 <tr v-for="(item,index) in pageArr" :key="index">
-                    <td>{{item.type}}</td>
+                    <td>{{groupList[item.group]}}</td>
+                    <td>{{mediumList[item.medium]}}</td>
                     <td>{{item.name}}</td>
-                    <td>{{item.identifying}}</td>
-                    <td  v-if="item.pattern">{{item.pattern}}</td>
+                    <td>{{item.url}}</td>
+                    <td>{{item.term}}</td>
                     <td class="td-edit">
-                        <a class="table-edit" href="javascript:" @click="bindEdit($event,item.id)">编辑</a>
                         <a class="table-remove" href="javascript:" @click="bindRemove($event,item.id)">删除</a>
                     </td>
                 </tr>
@@ -63,28 +49,34 @@
 </template>
 
 <script>
-    import {mapActions} from "vuex";
+    import {mapGetters , mapActions} from "vuex";
     import  bus from './js/a.js';
-    import page from "./page"
+    import page from "./page";
     export default {
         name:"fixedDitch",
-        props:['searchData','searchTitle','searchUrl'],
+        props:['searchData','searchTitle','searchUrl',"popu"],
         data(){
             return {
-                arr:0,
                 // 当前页面数据
                 pageArr:[],
                 tip:"",
                 isShowTip:false,
                 isRemove:false,
                 dataId:0,
-                pageSize:0,
-                total:0,
+                groupList:"",
+                mediumList:"",
+                pageSize:"",
+                total:"",
                 isQuery:0
             }
         },
         watch:{
-
+            "popu":function(val){
+                this.mediumList = this.popu.medium;
+            }
+        },
+        computed:{
+            ...mapGetters(['getGroup','getWeb'])
         },
         mounted(){
             document.body.addEventListener("click",()=>{
@@ -96,6 +88,8 @@
                 _this.submitData({name:'',identifying:'',page:1});
             })
 
+            this.groupList = this.getGroup;
+            
         },
         methods:{
             ...mapActions(['setHint']),
@@ -110,7 +104,6 @@
                     dataType:"JSON",
                     success:function(res){
                         _this.pageArr = res.data.list;
-                        _this.arr = res.data.total;
                         _this.pageSize = res.data.pageSize;
                         _this.total = res.data.total;
                     }
@@ -120,19 +113,11 @@
             submitBtn(){
                 this.add = 1;
                 this.submitData({name:this.searchData[0].value,identifying:this.searchData[1].value,page:1})
-                ++this.isQuery;
             },
             // 父组件通信(跳转到新增页面)
             changeShow(){
                 bus.$emit('bindBrother')
                 this.$emit("getChild")
-            },
-            // 编辑按钮
-            bindEdit(event,id){
-                bus.$emit('bindBrother',id)
-                this.$emit("getChild")
-                // this.$emit("bindChildEdit",{id:id,isEdit:++this.isEdit})
-               
             },
             // 删除按钮
             bindRemove(event,id){

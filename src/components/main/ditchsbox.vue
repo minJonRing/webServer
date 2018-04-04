@@ -22,7 +22,6 @@
         },
         methods:{
             setFather(val){
-                console.log(val)
                 if(val){
                     this.isShowList = true;
                 }else{

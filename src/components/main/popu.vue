@@ -1,14 +1,57 @@
 <template>
   <div class="ditch">
         <!-- <input-select @getSelect="setData" :elName="'渠道组类型'" :txt="ajaxData.ajaxType" :propType="{type:'type'}" :hint="'请输入渠道组类型'" :list="list"></input-select> -->
-        <div class="inputSelect" style="z-index:9">
+        <div class="inputText">
+            <span>*</span>
+            <p>资源名称</p>
+            <div class="input-box">
+                <input type="text" name="name" v-model="name" placeholder="请输入渠道组匹配标识">
+            </div>
+            <i></i>
+        </div>
+        <div class="inputSelect" style="z-index:10">
+            <span>*</span>
+            <p>推广资源</p>
+            <div class="input-box">
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':view[0].isShow}"></i>
+                <div class="copyModel" @click.stop="bindChange($event,0)">{{view[0].Cont}}</div>
+                <ul :class="{'show-select':view[0].isShow}" @click.stop>
+                    <li v-for="(val,key,index) in view[0].list" :key="index" @click="bindSelect($event,{val:val,key:key,index:0,selectUrl:true})">{{val}}</li>
+                </ul>
+            </div>
+            <i></i>
+        </div>
+        <div class="inputSelect" style="z-index:9" v-show="isShowPopu">
+            <span>*</span>
+            <p>模块</p>
+            <div class="input-box">
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':view[1].isShow}"></i>
+                <div class="copyModel" @click.stop="bindChange($event,1)">{{view[1].Cont}}</div>
+                <ul :class="{'show-select':view[1].isShow}" @click.stop>
+                    <li v-for="(item,index) in view[1].list[view[0].key]" :key="index" @click="bindSelect($event,{val:item.source_name,key:index,index:1,module:item.key,isInfo:true,url:item.url})">{{item.source_name}}</li>
+                </ul>
+            </div>
+            <i></i>
+        </div>
+        <div class="inputText" :class="{'show-name':!isShowName}">
+            <span>*</span>
+            <p>关键词</p>
+            <div class="input-box" style="position:relative;z-index:8">
+                <input type="text" name="name" v-model="keyName" @keyup="bindKey" placeholder="请输入渠道组匹配标识">
+                <ul class="ajax-list" :class="{'show-ajax-list':isHaveSource}">
+                    <li v-for="(item,index) in ajaxlist" :key="index" @click="bindSetKeyName($event,{name:item.title,url:item.url})">{{item.title}}</li>
+                </ul>
+            </div>
+            <i></i>
+        </div>
+        <div class="inputSelect" style="z-index:7">
             <span>*</span>
             <p>渠道组</p>
             <div class="input-box">
-                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowGroup}"></i>
-                <div class="copyModel" @click.stop="bindChangeGroup">{{type}}</div>
-                <ul :class="{'show-select':isShowGroup}" @click.stop>
-                    <li v-for="(val,key,index) in group" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':view[2].isShow}"></i>
+                <div class="copyModel" @click.stop="bindChange($event,2)">{{view[2].Cont}}</div>
+                <ul :class="{'show-select':view[2].isShow}" @click.stop>
+                    <li v-for="(val,key,index) in view[2].list" :key="index" @click="bindSelect($event,{val:val,key:key,index:2})">{{val}}</li>
                 </ul>
             </div>
             <i></i>
@@ -17,43 +60,11 @@
             <span>*</span>
             <p>渠道媒介</p>
             <div class="input-box">
-                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowMedium}"></i>
-                <div class="copyModel" @click.stop="bindChangeMedium">{{type}}</div>
-                <ul :class="{'show-select':isShowMedium}" @click.stop>
-                    <li v-for="(val,key,index) in medium" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
+                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':view[3].isShow}"></i>
+                <div class="copyModel" @click.stop="bindChange($event,3)">{{view[3].Cont}}</div>
+                <ul :class="{'show-select':view[3].isShow}" @click.stop>
+                    <li v-for="(val,key,index) in view[3].list" :key="index" @click="bindSelect($event,{val:val,key:key,index:3})">{{val}}</li>
                 </ul>
-            </div>
-            <i></i>
-        </div>
-        <div class="inputSelect">
-            <span>*</span>
-            <p>推广资源</p>
-            <div class="input-box">
-                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowMedium}"></i>
-                <div class="copyModel" @click.stop="bindChangeMedium">{{type}}</div>
-                <ul :class="{'show-select':isShowMedium}" @click.stop>
-                    <li v-for="(val,key,index) in medium" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
-                </ul>
-            </div>
-            <i></i>
-        </div>
-        <div class="inputSelect">
-            <span>*</span>
-            <p>推广类型</p>
-            <div class="input-box">
-                <i class="icon iconfont icon-zheng-triangle" :class="{'rotate-icon':isShowMedium}"></i>
-                <div class="copyModel" @click.stop="bindChangeMedium">{{type}}</div>
-                <ul :class="{'show-select':isShowMedium}" @click.stop>
-                    <li v-for="(val,key,index) in medium" :key="index" @click="bindSelect($event,{val:val,key:key})">{{val}}</li>
-                </ul>
-            </div>
-            <i></i>
-        </div>
-        <div class="inputText">
-            <span>*</span>
-            <p>资源名称</p>
-            <div class="input-box">
-                <input type="text" name="name" v-model="matchIcon" placeholder="请输入渠道组匹配标识">
             </div>
             <i></i>
         </div>
@@ -76,62 +87,74 @@
         props:["searchUrl","popu"],
         data(){
             return {
-                ajaxId:0,
+                view:[
+                    {Cont:"请选择",isShow:false,list:{},key:0},
+                    {Cont:"请选择",isShow:false,list:{},key:0},
+                    {Cont:"请选择",isShow:false,list:{},key:0},
+                    {Cont:"请选择",isShow:false,list:{},key:0},
+                ],
+                // 关键词
+                keyName:"",
+                // 资源名称
                 name:"",
-                type:"请选择",
-                icon:"",
-                matchIcon:"",
-                ajaxType:0,
-                isShowGroup:false,
-                isShowMedium:false,
-                isNew:false
+                // 模块
+                module:"",
+                // url链接
+                sourceUrlList:{},
+                sourceUrlAjax:"",
+                sourceUrl:"",
+                // 显示资源名称
+                isShowName:false,
+                // 延迟发送请求
+                delay:"",
+                // 是否显示详情搜索框
+                isHaveSource:false,
+                // 关键词搜索框匹配数据
+                ajaxlist:[],
+                // 是否显示推广资源
+                isShowPopu:false
             }
         },
         mounted(){
-            console.log(this.popu)
             let _this = this;
-             $.ajax({
-                url:_this.searchUrl+"getEditInfo",
-                type:"POST",
-                data:{id:1},
-                dataType:"JSON",
-                success:(res)=>{
-                    let data = res.data;
-                    this.list = data.group_type;
-                }
-            })
             document.body.addEventListener('click',()=>{
-                this.isShowGroup = this.isShowMedium = false;
-            })
-            
-            bus.$on('bindBrother',function (val) { 
-                if(val){
-                    $.ajax({
-                        url:_this.searchUrl+"getEditInfo",
-                        type:"POST",
-                        data:{id:val},
-                        dataType:"JSON",
-                        success:(res)=>{
-                            let data = res.data;
-                            _this.ajaxId = val;
-                            _this.name= data.group[0].name; //名称
-                            _this.ajaxType = data.group[0].type; //类型索引(s数字)
-                            _this.type = _this.list[data.group[0].type]; //类型索引(文字)
-                            _this.icon = data.group[0].identifying; //标识
-                            _this.matchIcon = data.group[0].pattern; //匹配标识 
-                        }
-                    })
-                }else{
-                    _this.name="";
-                    _this.type="请选择";
-                    _this.icon="";
-                    _this.matchIcon="";
-                    _this.ajaxType=0;
+                for(let i in this.view){
+                    this.view[i].isShow =false;
                 }
+            })
+
+            bus.$on("bindBrother",function () {
+                _this.view[0].Cont = _this.view[1].Cont =_this.view[2].Cont =_this.view[3].Cont ="请选择";
+                _this.view[0].key = _this.view[1].key =_this.view[2].key =_this.view[3].key =0;
+                
+                
+                // 关键词
+                _this.keyName="";
+                // 资源名称
+                _this.name="";
+                // 模块
+                _this.module="";
+                // url链接
+                _this.sourceUrl="";
+                // 显示资源名称
+                _this.isShowName=false;
+                // 是否显示详情搜索框
+                _this.isHaveSource=false;
+                // 关键词搜索框匹配数据
+                _this.ajaxlist=[];
+                // 是否显示推广资源
+                _this.isShowPopu=false
             })
         },
         watch:{
-
+            "popu":function (val) {  
+                this.view[0].list = this.popu.web_name;
+                this.view[1].list = this.popu.module;
+                this.view[2].list = this.popu.group;
+                this.view[3].list = this.popu.medium;
+                this.sourceUrlList = this.popu.web;
+            },
+                
         },
         computed:{
             group:function(){
@@ -145,18 +168,41 @@
             ...mapActions(['setHint']),
             // 发送ajax请求
             bindCreate(){
+                if(!this.name){
+                    this.setHint({txt:"请输入资源名称",className:"hint-error"});
+                    return ;
+                }else if(!this.view[2].key){
+                    this.setHint({txt:"请选推广资源",className:"hint-error"});
+                    return ;
+                }else if(!this.view[3].key){
+                    this.setHint({txt:"请选择渠道组",className:"hint-error"});
+                    return ;
+                }else if(!this.sourceUrl){
+                    this.setHint({txt:"请选渠道媒介",className:"hint-error"});
+                    return ;
+                }
                 let _this = this;
-                let _data = {name:this.name,type:this.ajaxType,identifying:this.icon,pattern:this.matchIcon}
+                let _data = {
+                    name:this.name,
+                    group:this.view[2].key,
+                    medium:this.view[3].key,
+                    url:this.sourceUrl,
+                    term:this.keyName
+                }
                 if(this.ajaxId){
                     _data.id = this.ajaxId;
+                }else{
+                    if(_data.id){
+                        delete _data.id;
+                    }
                 }
-                console.log(_data)
                 $.ajax({
                     url:_this.searchUrl+"saveData",
                     type:"POST",
                     data:_data,
                     dataType:"JSON",
                     success:(res)=>{
+                        console.log(res)
                         if(res.status == 1){
                             this.ajaxId = 0;
                             this.bindReturn(true)
@@ -175,17 +221,65 @@
             },
             // select 选择
             bindSelect(event,val){
-                this.ajaxType = val.key;
-                this.type = val.val;
-                this.isShowSelect = false;
+                for(let i in this.view){
+                    if(i == val.index){
+                        this.view[i].Cont = val.val;
+                        this.view[i].key = val.key;
+                    }
+                }
+                this.bindChange(event,val.index);
+
+                // 推广资源网站地址选择
+                if(val.selectUrl){
+                    this.sourceUrlAjax = this.sourceUrlList[val.key];
+                    this.isShowPopu = true;
+                }
+                // 关键字选择
+                if(val.module){
+                    this.sourceUrl = val.url;
+                    this.module = val.module.replace(/(\:).+$/g,"");
+                }
+                if(val.isInfo){
+                    this.keyName = val.val;
+                    if(/(detail)/.test(val.module)){
+                        this.keyName = "";
+                        this.isShowName = true;
+                    }else{
+                        this.isShowName = false;
+                    }
+                }
+                
             },
-            bindChangeGroup(){
-                this.isShowGroup = !this.isShowGroup;
-                this.isShowMedium = false;
+            bindChange(event,val){
+                for(let i in this.view){
+                    if(i == val){
+                        this.view[i].isShow = !this.view[i].isShow;
+                    }else{
+                        this.view[i].isShow = false;
+                    }
+                }
             },
-            bindChangeMedium(){
-                this.isShowMedium = !this.isShowMedium;
-                this.isShowGroup = false;
+            bindKey(){
+                $.ajax({
+                    url:"http://"+this.sourceUrlAjax+"/site/select",
+                    type:"POST",
+                    data:{module:this.module,keyword:this.keyName},
+                    dataType:"JSON",
+                    success:(res)=>{
+                        if(res.data.length > 0){
+                            this.isHaveSource = true;
+                            this.ajaxlist = res.data;
+                        }else{
+                            this.isHaveSource = false;
+                        }
+                    }
+                })
+                
+            },
+            bindSetKeyName(event,val){
+                this.keyName = val.name;
+                this.sourceUrl = val.url;
+                this.isHaveSource = false;
             }
         },
         components:{
@@ -204,6 +298,42 @@
     width: 460px;
     text-align: left;
     padding-left: 140px;
+}
+.show-name {
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    z-index: 9;
+}
+.ajax-list {
+    position: absolute;
+    width: 100%;
+    top: 48px;
+    left: 0;
+    border: 1px #e4e4e4 solid;
+    border-radius: 6px;
+    color: #333;
+    padding: 6px 12px;
+    background-color: #fff;
+    text-align: left;
+    opacity: 0;
+    transition-duration: 600ms;
+    transform: matrix(1,0,0,1,20,0);
+    pointer-events: none;
+}
+.show-ajax-list {
+    opacity: 1;
+    transform: matrix(1,0,0,1,0,0);
+    pointer-events: auto;
+}
+.ajax-list li {
+    width: 100%;
+    padding: 6px 0;
+    border-bottom: 1px #e4e4ee dashed;
+    cursor: pointer;
+}
+.ajax-list li:last-child {
+    border: none;
 }
 </style>
 

@@ -78,7 +78,6 @@
 </template>
 <script>
     import VTable from './table/table';
-    import ajaxData from "./table/ajax";
 
     import {mapGetters} from "vuex";
 

@@ -17,6 +17,10 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
+input:focus {
+    outline-color: deepskyblue;
+}
+
 .box-size {
     box-sizing: border-box;
 }

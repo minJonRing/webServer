@@ -84,6 +84,8 @@ export default {
         
         this.username = "admin";this.password = 111111;
         let _this = this;
+        this.$router.push({path:"/app/main"})
+        return ;
         if(this.isVerify && this.username && this.password){
             let data = {username:this.username,password:this.password}
             $.ajax({
@@ -92,6 +94,7 @@ export default {
                 data:data,
                 dataType:"JSON",
                 success:function(res){
+                    console.log(1)
                     _this.setUser(res.data);
                     localStorage.setItem('time',Date.now());
                     _this.$router.push({path:"/app/main"})

@@ -117,6 +117,7 @@ window.tqr;
             "ajaxData":function(val){
                 this.initData = dataClassification(val);
                 this.filterData = this.initData;
+                console.log(val)
             }
         },
         methods:{

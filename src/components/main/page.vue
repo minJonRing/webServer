@@ -2,17 +2,13 @@
   <div class="page">
       <div class="page flex flex-mid">
           <div class="page-number flex-1 flex flex-mid">
-              <p>共{{dataLength}}条</p>
+              <p>共{{total}}条</p>
               <p>{{page}}/{{pages}}页</p>
           </div>
           <div class="flex flex-mid">
-              <a class="page-btn" :class="{'page-btn-over':page == 1}" href="javascript:" @click="prev">&lt;</a>
-              <a class="page-btn" :class="{'page-btn-over':page == pages}"  href="javascript:" @click="next">&gt;</a>
-              <div class="flex flex-mid">
-                  <p class="page-go">跳转到</p>
-                  <input class="page-input" type="text" name="name" id="" v-model="inputPage">
-                  <a class="page-btn" href="javascript:" @click="gowill">GO</a>
-              </div>
+              <a class="page-btn" :class="{'page-btn-end':page == 1}" href="javascript:" @click="prev">&lt;</a>
+              <a class="page-btn" :class="{'page-btn-over':page == (index+1)}" href="javascript:" v-for="(item,index) in pages" :key="index" @click="gowill($event,index)">{{index+1}}</a>
+              <a class="page-btn" :class="{'page-btn-end':page == pages}"  href="javascript:" @click="next">&gt;</a>
           </div>
       </div>
   </div>
@@ -21,35 +17,24 @@
 <script>
     export default {
         name:"page",
-        props:['dataLength','nowPage'],
+        props:['pagesize','total',"isQuery"],
         data(){
             return {
                 pages:0,
-                page:1,
-                inputPage:1
+                page:1
             }
         },
         mounted(){
-            setTimeout(() => {
-                this.pages = Math.ceil(this.dataLength/5);
-            }, 1);
         },
         watch:{
-            'nowPage':function(val){
-                this.page = val
-            },
             'page':function(val){
-                this.$emit("switchPage",this.page);
+                this.$emit("switchPage",val);
             },
-            'inputPage':function(val){
-                let page = (val+"").replace(/[^0-9]$/g,'');
-                if(page <1){
-                    page = 1
-                }else if(page > this.pages){
-                    page = this.pages
-                }
-                this.inputPage = page;
-                
+            'total':function(val){
+                this.pages = Math.ceil(val/this.pagesize);
+            },
+            "isQuery":function(){
+                this.page = 1;
             }
         },
         methods:{
@@ -67,9 +52,8 @@
                     this.page++
                 }
             },
-            gowill(){
-                this.$emit("switchPage",this.inputPage);
-                this.page = this.inputPage;
+            gowill(event,val){
+                this.page = val+1;
             }
         }
     }
@@ -108,12 +92,21 @@
 }
 
 .page-btn:hover {
-    background-color: #f5f5f5;
-    color: deepskyblue;
+    background-color: deepskyblue;
+    color: #fff;
 }
-
+.page-btn-end {
+    background-color: #dfdfdf;
+    cursor: no-drop;
+}
 .page-btn-over {
-    background-color: #f7f7f7;
+    background-color: deepskyblue;
+    color: #fff;
+}
+.page-btn-end:hover{
+    background-color: #dfdfdf;
+    color: #333;
+    opacity: 1;
 }
  </style>
  
